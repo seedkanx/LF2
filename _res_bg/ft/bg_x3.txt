@@ -1,0 +1,78 @@
+name: Forbidden_Tower
+width: 2400   zboundary: 289 510
+shadow: _res_bg/ft/s_x3  shadowsize: 37 9
+upscale: 3
+layer: 
+  _res_bg/ft/sky_x3
+  transparency: 0  width: 800  x: 0  y: 128
+layer_end
+
+layer: 
+  _res_bg/ft/w_x3
+  transparency: 1  width: 1500  x: 0  y: 128 loop: 864
+layer_end
+
+layer: 
+  _res_bg/ft/c_x3
+  transparency: 1  width: 2300  x: 0  y: 128 loop: 648
+layer_end
+
+layer: 
+  _res_bg/ft/top_x3
+  transparency: 1  width: 2330  x: 0  y: 306 loop: 306
+layer_end
+
+layer: 
+  _res_bg/ft/carpet_x3
+  transparency: 0  width: 2400  x: 0  y: 317 loop: 300
+layer_end
+
+layer: 
+  _res_bg/ft/bottom_x3
+  transparency: 0  width: 2470  x: 0  y: 489 loop: 308
+layer_end
+
+layer: 
+  _res_bg/ft/bottom2_x3
+  transparency: 0  width: 2470  x: 0  y: 507 loop: 476
+layer_end
+layer: 
+  _res_bg/ft/fire1_x3
+  transparency: 0  width: 2300  x: 140 y: 128 loop: 324 cc: 20 c1: 0 c2: 1
+layer_end
+layer: 
+  _res_bg/ft/fire2_x3
+  transparency: 0  width: 2300  x: 140 y: 128 loop: 324 cc: 20 c1: 2 c2: 3
+layer_end
+layer: 
+  _res_bg/ft/fire3_x3
+  transparency: 0  width: 2300  x: 140 y: 128 loop: 324 cc: 20 c1: 4 c2: 5
+layer_end
+layer: 
+  _res_bg/ft/fire4_x3
+  transparency: 0  width: 2300  x: 140 y: 128 loop: 324 cc: 20 c1: 6 c2: 7
+layer_end
+layer: 
+  _res_bg/ft/fire5_x3
+  transparency: 0  width: 2300  x: 140 y: 128 loop: 324 cc: 20 c1: 8 c2: 9
+layer_end
+layer: 
+  _res_bg/ft/fire6_x3
+  transparency: 0  width: 2300  x: 140 y: 128 loop: 324 cc: 20 c1: 10 c2: 11
+layer_end
+layer: 
+  _res_bg/ft/fire7_x3
+  transparency: 0  width: 2300  x: 140 y: 128 loop: 324 cc: 20 c1: 12 c2: 13
+layer_end
+layer: 
+  _res_bg/ft/fire8_x3
+  transparency: 0  width: 2300  x: 140 y: 128 loop: 324 cc: 20 c1: 14 c2: 15
+layer_end
+layer: 
+  _res_bg/ft/fire9_x3
+  transparency: 0  width: 2300  x: 140 y: 128 loop: 324 cc: 20 c1: 16 c2: 17
+layer_end
+layer: 
+  _res_bg/ft/firea_x3
+  transparency: 0  width: 2300  x: 140 y: 128 loop: 324 cc: 20 c1: 18 c2: 19
+layer_end

@@ -1,0 +1,32 @@
+name: The_Great_Wall
+width: 2400   zboundary: 326 477
+shadow: _res_bg/gw/s_x3  shadowsize: 37 9
+upscale: 3
+layer: 
+  _res_bg/gw/sky_x3
+  transparency: 0  width: 800  x: 0  y: 128
+layer_end
+layer: 
+  _res_bg/gw/hill1_x3
+  transparency: 1  width: 1201  x: 0  y: 142
+layer_end
+layer: 
+  _res_bg/gw/ground1_x3
+  transparency: 1  width: 2400  x: 0  y: 143
+layer_end
+layer: 
+  _res_bg/gw/ground3_x3
+  transparency: 1  width: 2400  x: 443  y: 304 loop: 443
+layer_end
+layer: 
+  _res_bg/gw/ground2_x3
+  transparency: 1  width: 2400  x: 487  y: 256 loop: 279
+layer_end
+layer: 
+  _res_bg/gw/bottom1_x3
+  transparency: 1  width: 2800  x: 0  y: 484
+layer_end
+layer: 
+  _res_bg/gw/bottom2_x3
+  transparency: 1  width: 2800  x: 558  y: 484 loop: 493
+layer_end

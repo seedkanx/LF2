@@ -1,0 +1,23 @@
+name: Brokeback_Cliff
+width: 1500   zboundary: 300 510
+shadow: _res_bg/bc/s_x3  shadowsize: 37 9
+upscale: 3
+layer: 
+  _res_bg/bc/sky_x3
+  transparency: 0  width: 1280  x: 462  y: 128
+layer_end
+
+layer: 
+  _res_bg/bc/back1_x3
+  transparency: 0  width: 1500  x: 0  y: 128
+layer_end
+
+layer: 
+  _res_bg/bc/back2_x3
+  transparency: 0  width: 1500  x: 501  y: 128
+layer_end
+
+layer: 
+  _res_bg/bc/back3_x3
+  transparency: 0  width: 1500  x: 1002  y: 128
+layer_end

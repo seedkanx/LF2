@@ -1,0 +1,405 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>LF2 Move List</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #051c55;
+      font-family: 'Roboto', 'Noto', sans-serif;
+      font-size: 16px;
+      overflow-x: hidden;
+    }
+
+    .top-icons-container {
+      position: relative;
+      width: 725px;
+      height: 125px;
+      margin: 0 auto;
+      background: url('top_icons.png') no-repeat;
+      background-size: 100% auto;
+    }
+
+    .avatar {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      border: 2.5px solid transparent;
+      cursor: pointer;
+    }
+
+    .avatar.selected {
+      border: 2.5px solid white;
+    }
+    .avatar.hovering {
+      border: 2.5px solid white;
+    }
+
+    .moves-image-wrapper {
+      position: absolute;
+      margin: 0 auto;
+      display: none;
+      top: 125px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .moves-image-wrapper.active {
+      display: block;
+    }
+
+    .moves-image {
+      position: absolute;
+      top: 0;
+      transform: translateX(-50%);
+      width: 725px;
+      height: auto;
+      display: block;
+      z-index: 999;
+    }
+
+    .move-gif {
+      position: absolute;
+      transform: scale(0.5, 0.5) translate(-50%, -50%) translateX(-725px);
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    #scaleWrapper {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      transform-origin: top center;
+    }
+
+    #close-btn {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      color: white;
+      opacity: 0.5;
+      cursor: pointer;
+      font-size: 14px;
+      user-select: none;
+      transition: opacity 0.2s;
+      transform: translateY(450px);
+    }
+
+    #close-btn:hover {
+      opacity: 1.0;
+    }
+
+    #loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 545px;
+      background-color: rgba(5, 28, 85, 0.5);
+      color: white;
+      font-size: 24px;
+      font-family: 'Roboto', 'Noto', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+  </style>
+</head>
+<body>
+  <div id="scaleWrapper">
+    <div class="top-icons-container" id="topIconsContainer"></div>
+    <div id="movesContainer"></div>
+    <div id="close-btn">ESC - Close 關閉</div>
+    <div id="loading-overlay">Loading...</div>
+  </div>
+  <script>
+    let currentSelected = 'basics';
+    let currentSelectedIndex = 23;
+    
+    const charmoves = [
+      { name: 'davis', moves: 4 }, { name: 'woody', moves: 6 }, { name: 'dennis', moves: 4 },
+      { name: 'freeze', moves: 4 }, { name: 'firen', moves: 4 }, { name: 'louis', moves: 5 },
+      { name: 'rudolf', moves: 6 }, { name: 'henry', moves: 5 }, { name: 'john', moves: 5 },
+      { name: 'deep', moves: 5 }, { name: 'bandit', moves: 0 }, { name: 'hunter', moves: 1 },
+      { name: 'mark', moves: 2 }, { name: 'jack', moves: 2 }, { name: 'sorcerer', moves: 4 },
+      { name: 'monk', moves: 1 }, { name: 'jan', moves: 2 }, { name: 'knight', moves: 0 },
+      { name: 'justin', moves: 2 }, { name: 'bat', moves: 3 }, { name: 'louisex', moves: 4 },
+      { name: 'firzen', moves: 3 }, { name: 'julian', moves: 6 }, { name: 'basics', moves: 4 },
+    ];
+
+    const container = document.getElementById('topIconsContainer');
+    const movesContainer = document.getElementById('movesContainer');
+
+    for (let j=charmoves.length-1; j>=0; j--) {
+      let char = charmoves[j];
+      const wrapper = document.createElement('div');
+      wrapper.classList.add('moves-image-wrapper');
+      wrapper.id = `wrapper-${char.name}`;
+
+      let positions = [
+          { x: 428 * 0.5, y: 141 * 0.5 },
+          { x: 949 * 0.5, y: 141 * 0.5 },
+          { x: 428 * 0.5, y: 493 * 0.5 },
+          { x: 949 * 0.5, y: 493 * 0.5 },
+        ];
+      if (char.moves === 6) {
+        positions = [
+          { x: 428 * 0.5, y: 141 * 0.5 },
+          { x: 770 * 0.5, y: 141 * 0.5 },
+          { x: 1112 * 0.5, y: 141 * 0.5 },
+          { x: 428 * 0.5, y: 493 * 0.5 },
+          { x: 770 * 0.5, y: 493 * 0.5 },
+          { x: 1112 * 0.5, y: 493 * 0.5 },
+        ];
+      }
+      if (char.moves === 5) {
+        positions = [
+          { x: 428 * 0.5, y: 141 * 0.5 },
+          { x: 770 * 0.5, y: 141 * 0.5 },
+          { x: 1112 * 0.5, y: 141 * 0.5 },
+          { x: 428 * 0.5, y: 493 * 0.5 },
+          { x: 949 * 0.5, y: 493 * 0.5 },
+        ];
+      }
+      if (char.name === 'basics') {
+        positions = [
+          { x: 74 * 0.5, y: 113 * 0.5 },
+          { x: 415 * 0.5, y: 113 * 0.5 },
+          { x: 757 * 0.5, y: 113 * 0.5 },
+          { x: 1099 * 0.5, y: 113 * 0.5 },
+        ];
+      }
+      for (let i = 1; i <= char.moves; i++) {
+        const gif = document.createElement('img');
+        gif.src = `${char.name}_move${i}.gif`;
+        gif.classList.add('move-gif');
+        gif.style.left = positions[i - 1].x + 'px';
+        gif.style.top = positions[i - 1].y + 'px';
+        wrapper.appendChild(gif);
+      }
+
+      const img = document.createElement('img');
+      img.src = `${char.name}_moves.png`;
+      img.classList.add('moves-image');
+      wrapper.appendChild(img);
+
+      movesContainer.appendChild(wrapper);
+    }
+
+    charmoves.forEach((char, index) => {
+      const row = Math.floor(index / 12);
+      const col = index % 12;
+      const x = 2.5 + col * 60;
+      const y = 2.5 + row * 60;
+
+      const div = document.createElement('div');
+      div.classList.add('avatar');
+      if (index === 0) div.classList.add('selected');
+      div.style.left = `${x}px`;
+      div.style.top = `${y}px`;
+      div.dataset.name = char.name;
+
+      div.addEventListener('click', () => selectCharacter(char.name));
+      container.appendChild(div);
+
+      div.addEventListener('mouseenter', () => {
+        div.classList.add('hovering');
+        updateMoves(char.name);
+      });
+
+      div.addEventListener('mouseleave', () => {
+        div.classList.remove('hovering');
+        updateMoves(currentSelected);
+      });
+    });
+
+    function selectCharacter(name) {
+      currentSelected = name;
+      currentSelectedIndex = charmoves.findIndex(char => char.name === name);
+
+      document.querySelectorAll('.avatar').forEach(div => {
+        div.classList.toggle('selected', div.dataset.name === name);
+      });
+
+      updateMoves(name);
+    }
+
+    function updateMoves(name) {
+      charmoves.forEach(char => {
+        const wrapper = document.getElementById(`wrapper-${char.name}`);
+        if (wrapper) {
+          wrapper.classList.toggle('active', char.name === name);
+        }
+      });
+    }
+
+    const ORIGINAL_HEIGHT = 570;
+
+    function updateScale() {
+      const scale = window.innerHeight / ORIGINAL_HEIGHT;
+      const wrapper = document.getElementById('scaleWrapper');
+      wrapper.style.transform = `translateX(-50%) scale(${scale})`;
+    }
+
+    window.addEventListener('resize', updateScale);
+    window.addEventListener('DOMContentLoaded', updateScale);
+
+    window.addEventListener('load', () => {
+      const images = document.querySelectorAll('.moves-image');
+      let loadedCount = 0;
+
+      images.forEach(img => {
+        if (img.complete) {
+          loadedCount++;
+          if (loadedCount === images.length) hideLoading();
+        } else {
+          img.addEventListener('load', () => {
+            loadedCount++;
+            if (loadedCount === images.length) hideLoading();
+          });
+          img.addEventListener('error', () => {
+            loadedCount++;
+            if (loadedCount === images.length) hideLoading();
+          });
+        }
+      });
+
+      function hideLoading() {
+        const overlay = document.getElementById('loading-overlay');
+        if (overlay) overlay.style.display = 'none';
+      }
+    });
+    
+    // Default selection
+    selectCharacter('basics');
+
+    document.getElementById('close-btn').addEventListener('click', () => {
+      window.close();
+    });
+
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        pressEsc();
+      } else if (event.key === 'ArrowUp') {
+        pressUp();
+      } else if (event.key === 'ArrowDown') {
+        pressDown();
+      } else if (event.key === 'ArrowRight') {
+        pressRight();
+      } else if (event.key === 'ArrowLeft') {
+        pressLeft();
+      }
+    });
+
+    function pressUp() {
+      if (currentSelectedIndex>=12)
+        selectCharacter(charmoves[currentSelectedIndex-12].name);
+    }
+    function pressDown() {
+      if (currentSelectedIndex<12)
+        selectCharacter(charmoves[currentSelectedIndex+12].name);
+    }
+    function pressLeft() {
+      if (currentSelectedIndex%12>0)
+        selectCharacter(charmoves[currentSelectedIndex-1].name);
+    }
+    function pressRight() {
+      if (currentSelectedIndex%12<11)
+        selectCharacter(charmoves[currentSelectedIndex+1].name);
+    }
+    function pressEsc() {
+      window.close();
+    }
+    window.addEventListener("gamepadconnected", (evt) => {
+        addGamepad(evt.gamepad);
+    });
+    loopStarted = false;
+    function addGamepad(gamepad) {
+        if (!loopStarted) {
+            requestAnimationFrame(updateStatus);
+            loopStarted = true;
+        }
+    }
+
+    let escDown = false;
+    let upDown = false;
+    let downDown = false;
+    let leftDown = false;
+    let rightDown = false;
+    function updateStatus() {
+        let escDown0 = escDown;
+        let upDown0 = upDown;
+        let downDown0 = downDown;
+        let leftDown0 = leftDown;
+        let rightDown0 = rightDown;
+        escDown = false;
+        upDown = false;
+        downDown = false;
+        leftDown = false;
+        rightDown = false;
+
+        for (const gamepad of navigator.getGamepads()) {
+            if (!gamepad) continue;
+
+            for (const [i, button] of gamepad.buttons.entries()) {
+                if (button.pressed) {
+                    if (i==12) {
+                      if (!upDown0) pressUp();
+                      upDown = true;
+                    }
+                    if (i==13) {
+                      if (!downDown0) pressDown();
+                      downDown = true;
+                    }
+                    if (i==14) {
+                      if (!leftDown0) pressLeft();
+                      leftDown = true;
+                    }
+                    if (i==15) {
+                      if (!rightDown0) pressRight();
+                      rightDown = true;
+                    }
+                    if (i==9) {
+                      if (!escDown0) pressEsc();
+                      escDown = true;
+                    }
+                }
+            }
+
+            for (const [i, axis] of gamepad.axes.entries()) {
+                if (axis>.5) {
+                    if (i==1) {
+                      if (!downDown0) pressDown();
+                      downDown = true;
+                    }
+                    if (i==0) {
+                      if (!rightDown0) pressRight();
+                      rightDown = true;
+                    }
+                }
+
+                if (axis<-.5) {
+                    if (i==1) {
+                      if (!upDown0) pressUp();
+                      upDown = true;
+                    }
+                    if (i==0) {
+                      if (!leftDown0) pressLeft();
+                      leftDown = true;
+                    }
+                }
+            }
+        }
+        requestAnimationFrame(updateStatus);
+    }
+  </script>
+</body>
+</html>

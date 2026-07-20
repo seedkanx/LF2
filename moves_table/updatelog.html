@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>LF2 - Update Log</title>
+  <style>
+    body {
+      background-color: #051c55;
+      font-family: 'Roboto', 'Noto', sans-serif;
+      font-size: 16px;
+      overflow-x: hidden;
+      margin: 0;
+      color: white;
+    }
+
+    #toolbar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 10px;
+      box-sizing: border-box;
+    }
+
+    #lang-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      font-weight: bold;
+      font-size: 14px;
+      color: white;
+      padding: 2px 6px;
+      box-sizing: border-box;
+      border-radius: 4px;
+    }
+
+    .selected {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+
+    #close-btn {
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    #title {
+      position: fixed;
+      top: 25px;
+      height: 30px;
+      width: 100%;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 2px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    #content {
+      position: absolute;
+      top: 60px;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      border: 1px solid white;
+      padding: 10px 10px 10px 10px;
+      overflow-y: auto;
+      background: #051c55;
+      color: white;
+      white-space: pre-wrap;
+      line-height: 1.6;
+    }
+
+    b {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="title">
+    LF2 - Update Log
+  </div>
+  <div id="toolbar">
+    <div id="lang-buttons">
+      <button id="btn-en" class="btn" onclick="showEnglish()">English</button>
+      <button id="btn-zh" class="btn" onclick="showChinese()">中文</button>
+    </div>
+    <div id="close-btn" onclick="window.close()">Esc ╳</div>
+  </div>
+
+  <div id="content"></div>
+
+  <script>
+    const englishUpdatelog = `<b>Version 2.16 Update (2025 Dec 24)</b>
+
+• Support up to 8 computers in Steam Network Mode
+• Battle mode no longer messes up team settings in VS mode
+• Press ↑ to select the 'Independent' team directly when choosing teams in the VS Character Menu
+• Allow hiding (shown as '?') Random characters in the game menu (in the 'Reset Random' setting, press → to toggle the eye icon)
+• If the above setting is 'Hidden' (eye icon with a strike-through), Random Characters will be reshuffled when the game restarts
+• Fix a bug where leaving Network Mode to the main menu caused mouse clicks to register twice and accidentally toggled fullscreen
+• Add 'Cost-Based Mode' for VS games
+   – Each team has a shared Team Cost Pool (default ₡300). Each independent player is treated as a one-player team.
+   – Each character has a fixed cost: Normal hero ₡100, Minion ₡50, Elite soldier ₡75, Boss ₡150–₡300.
+   – When a character is defeated, the team cost pool is reduced by that character’s cost. After the cost is deducted...
+     ◦ Case 1: Cost remains (> 0)
+       The character respawns. If the remaining cost (after deduction) is not enough to cover the full cost of the next respawn, the character will respawn with HP and MP reduced proportionally.
+     ◦ Case 2: Cost reaches 0
+       The entire team is defeated immediately, and no further respawns will occur.
+   – Higher-cost characters are usually stronger, but each defeat costs more.
+   – In the HP and MP UI, randomized characters are marked with ⚄ (dice) next to the player name, and the death count is shown as ✟[number].
+   – In the end game summary, each player can see all spawned characters used (up to 10) and the death count.
+• Add 'Time Limit' to VS and Championship modes:
+   – The match ends when the timer reaches zero.
+   – In Cost-Based Mode, the winner is the team with more cost remaining. If tied, the team with a higher percentage of surviving fighters (survivors ÷ team size) wins; if still tied, the team with a higher average HP per teammate wins.
+• More Game Options, you can choose whether to allow:
+   – Item drops
+   – Transform (to LouisEX)
+   – Respawn Shuffle (Random-character + Cost Based mode only): if a player uses Random Characters, their character is randomized on each respawn, with best effort to avoid repeats.
+• Rudolf will revert to Rudolf upon death if he has transformed into another character. (This prevents a series of potential respawn bugs)
+
+<hr><b>Version 2.15a Update (2025 Nov 17)</b>
+
+• Fixed an issue where the random seed was always the same when starting Network Mode (Steam), which also caused side effects such as the dropping-boomerang-only bug.
+• The lobby now displays each player’s location.
+• The lobby list now shows the latency of each lobby.
+• Fixed an issue where the lobby list could get stuck while fetching.
+
+<hr><b>Version 2.15 Update (2025 Nov 16)</b>
+
+• Network Mode (Steam Network) Alpha is now available.
+   – You no longer need entering IP address, port forwarding or a separate server program to play online with friends. Just create or join a lobby directly from the main menu.
+   – Please note this is an early alpha. Issues are expected, and further improvements are planned. If you encounter any bugs, please report them.
+
+• Removed the Zoom-in option from the settings menu, as many reports showed it was not useful. (And to test whether some players genuinely want it back in future updates. If not, removing it will help simplify the UI and reduce confusion.)
+
+• Lowered the achievement requirements for unlocking characters. Bat, LouisEX, Firzen, and Template are now unlocked at 26, 30, 40, 50 achievements (previously 30, 40, 50, 60).
+
+• Below are my upcoming plans:
+   – In the next small update, I will first focus on fixing bugs reported since v2.14.
+   – After that, I will continue improving the Network Mode (Steam Network) Alpha.
+   – Then, I will enhance the modding experience (e.g., allow loading mods from the main menu; provide a tool to convert old mods into the new LF2R-compatible format).
+   – Next, I will investigate the possibility of adding Steam Workshop support and enabling mod sharing in Network Mode.
+   – After that, I will work on Stage 6.
+
+<hr><b>Version 2.14d Update (2025 Sep 29)</b>
+
+Quick fix: Resolved a frame-data bug where Justin or Bat could crash the game when D↑A or D↓A was detected.
+
+<hr><b>Version 2.14c Update (2025 Sep 28)</b>
+
+• Quick fix: Fixed a bug where Henry/Hunter recovered a bit of MP/HP when performing the Run + Jump + Back Attack.
+
+The Steam matchmaking network mode is still in progress. Due to unforeseen matters, development is about 40% complete and temporarily on hold—I’m fully tied up and can’t work on it right now. I’ll return to it as soon as I’m able. Thank you for your patience. In the meantime, because the bug above drew strong complaints from some players, I prioritised a quick fix first.
+
+<hr><b>Version 2.14/2.14b Update (2025 Aug 21)</b>
+
+• Fixed GamePad/Control-Settings issues
+   – Fixed the problem where the game would freeze when connecting a GamePad of certain brands. 
+   – Resetting the keyboard to default no longer changes the GamePad selection settings.
+   – Disable external gamepads (the built-in gamepad can still be used) on Steam Deck (see 'Technical context' below for details). The UI now also better communicate to users that the Steam Deck built-in gamepad can be used as a 'P1 keyboard' through the official control layout.
+• Improved Full Screen experience
+   – When Steam Deck is detected, full screen will be triggered at startup.
+   – When the display resolution is smaller than the game’s default dimensions, full screen will be triggered at startup.
+   – Full screen is now available as an option in the root menu and as a button in the control settings (upper right corner) when NOT running on Steam Deck. This was added because some users did not realize they could enable full screen at all.
+• Fixed the issue where the game froze when switching to another app in full screen, or when switching to another full screen app, which caused all network peers to freeze. However, after this fix, in some edge cases, if the OS mistakenly treats the app as “minimized” (even when it is not), the freezing problem may still occur.
+• Fixed the "control hijacking" issue when P1 pressed Attack to enter VS mode (from the game mode menu), followed by P2 pressing Attack within 0.03 seconds, and then P1 pressing Attack again to join. This resulted in P1 hijacking P2’s controls and joining the game as P2.
+• Fixed some quarter-century-old bugs
+   – Corrected some incorrect 'vrest' and 'arest' values in Louis and LouisEX’s frame data. (This caused funny issues like: if Louis attacked an enemy (not the one he grabbed) with the D ↑ J move, he would be unable to attack that same enemy again for a while.)
+   – Fixed an issue where, if being hit and a non-attack interaction (picking/catching) occurred at the same time, the falling/injured action would be canceled and the picking/catching would continue. Now, the picking/catching will be canceled instead.
+   – Fixed the issue where characters with "auto-guard" (e.g., Julian, Louis) holding a stone would drop it when hit, even if the guard was not broken. Now the stone is kept in hand unless the guard breaks.
+   – Hunter will no longer consume MP when picking up items (MP should only be consumed when shooting arrows, not when picking items).
+• Partially rolled back some changes and fixed regressions from v2.13
+   – Louis and LouisEX can now perform →→A or →→JA even without enough MP. Their MP will simply drop to zero after performing.
+   – Rolled back the out-of-bound distance limit change from v2.13, which made enemies appear too quickly and cluster together.
+   – Adjusted the AI behavior for avoiding out-of-bound opponents. They will no longer consider hostages or non-enemies as out-of-bound targets.
+• [Added in v2.14b]
+   – Completely removed the out-of-bounds distance limit
+   – AI will no longer be interested in out-of-bounds objects or attempt to pick them up
+
+v2.14b will be released to the beta branch first. Once it proves stable, the default branch will be updated directly from v2.12 to v2.14b (skipping v2.13, as it was not stable enough).
+
+I was originally working on Steam Input integration (to resolve conflicts between Steam Input and my current gamepad implementation), but I’ve decided to pause that for now and shift my focus to network play. I’ve already spent more time on gamepad support than I originally planned.
+
+What this means for players (starting from v2.14)
+   – PC & Mac: You can still use a gamepad (but not for remote play). However, please disable Steam Input for this game to avoid conflicts (Steam Input should be disabled by default but could be accidentally enabled by an override).
+   Steps: Steam Library → Right-click the game → Properties → Controller → Override for “[Game]” → Disable Steam Input.
+   – Steam Deck: The built-in controls work using the official layout mapped to Player 1’s keyboard. However, external Bluetooth controllers for local multiplayer aren’t supported for now, because Steam Input interferes with the game’s native controller handling. Deck players can still play with others by joining network play.
+
+Technical context (for those interested):
+Steam Input is a Steam client feature that intercepts controller input and exposes a unified API. As far as I know, it’s also the only way to read the Steam Deck’s built-in gamepad input (when the gamepad isn’t emulating keyboard input). My game currently reads gamepad controllers via the native JavaScript GamePad APIs, which conflicts with Steam Input (since inputs are intercepted and redirected to steamClient.input.getControllers).
+I had planned to migrate to Steam Input via steamworks.js, but the sheer number and complexity of device, platform, and setting combinations make implementation and testing extremely time-consuming. With so few references or examples of steamworks.js available, the risk of sinking significant time into something that could encounter unsolvable blockers and fail to ship is simply too high. Delaying network play further would only frustrate players, so I’m pausing this integration for now.
+I’ll revisit Steam Input when a clearer path emerges (for example, a solid example project or tutorial). For now, my priority is delivering a solid network play experience.
+
+Personal sharing:
+Looking back on this update, I realize I underestimated the complexity of gamepad support, and it has taken a toll on my morale. I set out to solve a problem that could impress many players, but instead I often felt stuck. After putting in significant effort, I discovered the gamepad API conflicted with Steam Input, and the thought of reworking everything was painful. The frustration began to drain my momentum, and perhaps it is even a sign of burnout. That is part of why I decided not to spend more time on this issue.
+Still, I know many of you continue to support me, and I am truly grateful. Ups and downs are part of indie life, and I will keep going, shifting my focus to network play and doing my best. Thank you for your support.
+<hr><b>Version 2.13 Update (2025 Aug 14)</b>
+
+• Support GamePads!!!
+• Improvements for SteamDeck/GamePad
+   – Added an official control layout for SteamDeck
+   – The root menu can now be navigated using keys or a gamepad (previously mouse only)
+   – 'License and Notes' can now be exited by pressing ESC (or SteamDeck’s menu button)
+   – 'Roadmap', 'Update Log', 'How To Unlock', and 'Licenses and Notes' can now all be navigated with a gamepad (Xbox, PS4, PS5, Switch controllers only)
+   – In the pause screen, Resume, Step, Zoom, Hide-info, Full-Screen, and Restart are now clickable buttons, allowing SteamDeck players to tap on them without needing a keyboard
+• Control feel improvements
+   – The attack button, when triggering a jump attack or dash jump attack, will no longer be consumed and can still trigger moves (e.g., D → A or D ↑ A) after landing
+   – The jump button, even if it has triggered a jump and been consumed (for example, no longer used to trigger D ↑ J), can still be used to trigger 'D J A'.
+   – D ↑ J followed by A will no longer trigger D ↑ A
+• Reduce the sensitivity of AI in Normal and Easy difficulties (please provide feedback; I may adjust this in future versions)
+• In stage mode, AI teammates will avoid approaching computer opponents who are outside the border to prevent being ambushed. After computer opponents appear, the allowed distance they can stay outside the border will gradually shrink, making long-range ambushes less likely.
+• Fixed the floating+frozen+unresponsive issue when being attacked (more likely to occur with Louis)
+• The default z-width of the hitbox, previously increased from 15 to 17 units, has been readjusted to 16 units after reports that 17 felt excessive
+• Summary Stats fixes
+   – Fixed an issue where, after fusing Freeze and Firen into Firzen and then separating them back, the summary stats of one player were reset to zeroes
+   – When human-controlled Firen and Freeze fuse into Firzen and complete a stage, the achievement count will still treat it as Firen and Freeze involved.
+   – Rudolf, when transformed into another character, is now still counted as Rudolf for achievement purposes.
+• If Louis (or Louis-EX) does not have enough MP and performs →→A or →→JA, it will now fall back to a normal punch or jump attack instead of doing nothing
+• Rudolf and Henry will no longer consume MP when picking up items (MP should only be consumed when shooting ninja stars or arrows, not when picking items).
+• Fixed an issue where, if a human player selected a minion character in Battle mode, there was no invincibility period after getting up from the ground
+• Removed the F10 shortcut for toggling Zoom because it conflicted with some players’ GeForce recording shortcut. Zoom can still be toggled via the settings (upper right corner) or by pressing Z during pause
+• Blood Stained now appears when HP < 30% (previously 33.33%), matching the condition for Firzen fusion and Louis-EX transformation, making it a more useful indicator
+• The second hit of Woody's run attack now deals 25 units of damage (previously 5) and staggers the enemy
+• Zoomed-out (wider view) is now the default option instead of zoomed-in (closer view) due to ongoing feedback about the screen feeling too narrow; some players were unaware of the zoom-out feature
+• If the player’s name in Control Settings is left empty, it will now auto-fill with 'P#' (where # is 1–4 based on position) to prevent players from using blank names to pretend to be computer players
+• Fixed an issue where, if multiple players shared the same keyboard button for Left or Right, selecting the number of computers would cause the cursor to jump multiple steps
+• Fixed incorrect Julian MP information in the move list
+• In Network Mode, the fast-forward catch-up period for the slower machine has been further reduced to a negligible value.
+• Removed the 'Cancel' button in Control Settings, as gamepads are dynamic (can be connected, disconnected or reordered on the fly). The purpose of the 'Cancel' button is to 'forget' recent changes, but this conflicts with the dynamic nature of gamepads and can cause broken gamepad linkages or unintended swapping of gamepad settings.
+• Fixed an issue where, during network play, if the counterpart was configuring control settings, my screen should have shown a blue screen with the message 'Waiting for NAME(S) to configure control keys...'. Instead, the blue screen failed to appear and the game froze.
+• Further improved the potential fix for the issue where the right Shift key does not work on some keyboards.
+
+This update took longer than I expected. After receiving my SteamDeck and all my gamepad controllers, I initially thought adding gamepad support would be quick and easy. Since both gamepad-support and network-mode-improvement have received similar amounts of  requests, I decided to prioritize gamepad support first.
+However, the work turned out to be more complex due to various corner cases. Because the game is written in JavaScript, I’m limited by the Gamepad API, which has some quirks, such as gamepads staying “asleep” until at least one gamepad button is pressed, no persistent UUID to identify the same gamepad after a reboot, and occasional missing part of internal ID strings that make recognition difficult. Switch Pro gamepads in particular were challenging: both of mine showed noticeably higher latency compared to other gamepads, and sometimes became unresponsive when multiple gamepads were connected. These seem to be low level API/driver issues, so there’s little I can do to fully fix them.
+Another challenge is detecting whether the game is running on a SteamDeck. The Steamworks.js API I’m using struggles with this detection, so my plan to make the game launch in fullscreen by default on SteamDeck hasn’t been implemented yet. To make things trickier, there appears to be a driver layer that hides the SteamDeck’s built-in gamepads’s true ID, making it even harder to identify. For now, SteamDeck users can use the official control layout—which maps the gamepads inputs to keyboard keys—to play the game. (Yes, it’s a little odd that SteamDeck players will be selecting “Keyboard” in the control settings while actually using the build-in gamepads.) I plan to address this in the future, but network play improvements will take priority for now.
+That said, PS4/PS5 and Xbox gamepads are now supported well. Other non-branded gamepads are also supported, though the experience may be less optimal. I hope this improves your playing experience. This version will first be released as a Beta, and your feedback will be very valuable in helping refine it further. Thank you for your patience, and I hope you enjoy the update!
+<hr><b>Version 2.12 Update (2025 Aug 2)</b>
+
+• Steam Overlay is now supported (Windows only; unfortunately not supported on Mac, possibly due to a Steamworks.js issue). You can now take screenshots or record video more conveniently.
+• Steam Remote Play is now supported (Windows only, as it requires Steam Overlay. Audio may not work for connected players—this might be fixable through Steam settings on the player’s side without any game code changes. Please let me know if you find a solution.)
+• Allow the player to zoom out the gameplay screen slightly to better match the original LF2 screen view. Press F10 or click the zoom button at the upper right corner (after expanding the setting buttons). Previously, the background displayed at 712x400 units. Now, after zooming out, it is 794x400, leaving black bars at the top and bottom. This was done in response to many complaints that the narrower field of view affected the gameplay feel and control.
+• The Coliseum stage has been reverted back to 794x400 (previously 712x400 in v2.11), and when the game starts on the Coliseum stage, zoom-out will now be triggered automatically (and restored after the game ends) to ensure no horizontal scrolling occurs on that background.
+• Increased the default z-width of the hit box from 15 units to 17 units. Since characters are now slightly taller than in the original LF2, players started to feel that the hit box z-width was reduced. With this change, it should now be a bit easier to fight against AI, as the AI isn’t aware of this adjustment.
+• Input registration and control feel improvements:
+   – Pressing D → → J will no longer trigger D → J.
+   – Pressing → and then pressing D → J simultaneously will no longer trigger the unintended dash + defend bug. (This issue, before being fixed, might not have been reproducible on some keyboards that jam when multiple keys are pressed simultaneously. However, I'm confident this fix will improve the experience when control pad support is added in the future.)
+   – Pressing → → to run, and then pressing J + A simultaneously will now correctly trigger a dash-jump attack (previously it triggered a run attack and ignored jump because the attack key registered first).
+   – If J or A triggers an action, the key will now be consumed and won’t trigger further moves (this is different from the original LF2).
+   – However, the A key used for rolling + item pickup will not be consumed, to prevent situations where rolling + pickup unintentionally blocks special moves from being triggered.
+• Fixed a rare startup crash on Windows with the error "A JavaScript error occurred in the main process..." by including the Visual C++ Redistributable package in the game via SteamWorks settings.
+• Fixed a bug that caused the game to crash on Survival Stage 25.
+• Added a blinking HP bar effect when a character is being healed.
+• Fixed an item-stuck issue (when a player was picking up an item and got hit, the item would become stuck mid-air and unresponsive).
+• Potential fix for the crash when picking up an item and getting hit (I couldn’t reproduce this after hours of testing, but identified a potential root cause and added safeguards. Please report if the issue still occurs).
+• Fixed a bug where Julian jumps extremely high when using upper attack.
+• Fixed a bug where Henry’s weapon gets stuck mid-air when shooting backward during a dash while holding a weapon.
+• Fixed a bug where holding a stone and colliding with John’s shield causes the stone to disappear and then reappear in the player’s hand instead of dropping to the ground.
+• Fixed an issue where Alt+Tabbing out of the game and back in would cause the game to mistakenly think the Alt key was still being held.
+• Stage achievements will now unlock at lower difficulties automatically. For example, if you earn Stage 3 - Difficult, you will also receive Stage 3 - Normal and Easy. When you launch v2.12 for the first time, it will auto-check and unlock any missing easier achievements accordingly.
+• Potential fix for the issue where the right Shift key doesn’t work on some keyboards (I couldn’t verify this myself, but now when a Shift key is detected and the system can’t distinguish left or right, it defaults to right Shift. This should not cause regressions as such keys weren’t recognized before anyway).
+• Function key changes:
+   – ESC now also serves as a pause key.
+   – Pause + Q now restarts the game.
+   – Pause + N now performs a step-pause.
+   – Pause + H now hides the pause and info text.
+   – Pause + Z now toggles zoom.
+   These changes were made due to reports that function keys can be inconvenient to use, especially on keyboards that require pressing the ‘Fn’ key to trigger function keys.
+• Setting buttons are now collapsible/expandable to save space, as they are used in less than 1% of playtime.
+• Game icons on Windows now look slightly better. However, it still shows the default Electron icon in the task manager. I tried fixing this for 2 hours but couldn’t resolve it.
+• Fixed achievement-related issues when switching user accounts and restarting the game:
+   – Achievements could leak between accounts.
+   – The achievement count was incorrect until restarting the game or earning new achievements.
+• Localized Chinese achievement names and descriptions
+• Fixed a bug where the unlock code wasn’t recognized correctly on certain foreign keyboard layouts where '.' is not registered as 'Period'.
+• Added a debug log (saved locally and kept under 1MB) to help investigate white screen issue and other subtle bugs.
+• Minor fixes/changes:
+   – The refresh button in the network play room list has been moved to the upper-left corner to avoid overlapping with setting buttons.
+   – Background now won’t scroll while paused.
+   – Removed the horizontal gray line at the bottom of the screen in fullscreen mode.
+   – Fixed edge case where pause/speedup states could leak when gameplay ends.
+   – Fixed an English typo in Jan’s move list.
+   – Added "MP: 5" for "Mirror Image" in Julian’s move list.
+   – In the Basic Moves list, changed "Somersault" to "Breakfall," which is a more commonly used term in games.
+
+Because so much core code was changed, V2.12 will be released on beta first, and promoted to the default branch once confirmed stable.
+I originally planned to fix bugs in 2–3 days and then move on to improving network play. However, some personal distractions have made it hard to stay focused for long stretches. So I used fragmented time to fix the most severe or commonly reported issues. I'm also waiting to receive my Steam Deck before working on control pad support. If I find a quick fix for control pad, I might prioritize that before the network work. Thanks so much for your support!
+<hr><b>Version 2.11 Update (2025 July 26)</b>
+
+• Fixed the character stats issues. Movement stats now vary between characters.
+• Fixed Louis’s jump height issue (was too low).
+• Fixed keyboard input issues:
+   – Input now works with Caps Lock on.
+   – Shift and Ctrl keys are now supported. (Alt is still restricted due to conflicts with the system menu.)
+• Changed function key shortcuts:
+   – Now uses F1~F9 instead of Shift 1~9.
+   – Alt [ or Alt ] adjusts SFX volume; Alt , or Alt . adjusts BGM volume.
+• Added a BGM/SFX volume control UI to the top-right corner, with initial values set to BGM: 40 and SFX: 60.
+• Added a Move List button to the top-right corner for easier access, as some players found it inconvenient to open it from the menu bar or control settings.
+• Coliseum stage now matches the screen width, preventing horizontal scrolling.
+• Bronze and Silver achievements now unlock on higher difficulties too (e.g. playing with 2 teammates and clearing Stage 5 on Difficult now grants all 3 achievements: GOLD, SILVER, and BRONZE).
+• Added an QUIT button to the Game Mode menu (bottom right).
+• Accessibility for visually impaired players:
+   – Stereo sound added (previously mono). For example, if something happens on the left side of the screen, it will sound louder in the left speaker.
+   – The main menu now supports keyboard input for starting a game. (Press 1 to start local play, 2 for network play)
+• 'Unlock code' can now be entered on the character selection screen (so even if a key overlaps with an attack key, it still works).
+• Allow Crazy difficulty in VS mode.
+• Multiple players can now share the same input key. (Conflicts will be highlighted with a red box, but you can still click “OK” to confirm.)
+• Fixed a crash when too many items are dropped (e.g. pressing F8 repeatedly in VS Mode).
+• Fixed a crash that occurred during the final phase of Stage 1 (when the two Marks appear) if defeated.
+• F5 speed boost changed from 30x to 5x, as many found 30x too fast and uncontrollable.
+• Slightly reduced scrolling speed to improve comfort and reduce motion sickness.
+• In Network Mode, if lag occurs and the slower machine needs to catch up, it now fast-forwards for a much shorter duration, helping reduce discomfort.
+• Fixed a Chinese typo in Jack’s move list.
+• Fixed a UI typo in the 1-on-1 Championship (it incorrectly showed 2-on-2).
+• Fixed an issue where the player name input boxes in Control Settings appeared too small on high-resolution displays.
+
+Note: The launch is just the beginning — I’m continuing to improve and grow the game with your feedback. Thanks so much for the support, and stay tuned!
+<hr>
+<b>Version 2.1 (July 19, 2025)</b>
+First version released on Steam.
+`;
+
+
+    const chineseUpdatelog = `<b>版本 2.16 更新（2025 年 12 月 24 日）</b>
+
+• Steam Network Mode 現支援最多 8 台電腦連線
+• Battle mode 不再弄亂 VS mode 的隊伍設定
+• 在 VS 角色選單選隊時，按 ↑ 可直接選擇「Independent」隊伍
+• 允許在遊戲選單中隱藏（顯示為「?」） Random 角色（在「Reset Random」設定項目中，按 → 可切換「眼睛」圖示）
+• 若以上設定為「隱藏」（眼睛圖示帶劃線），遊戲重新開始時會重新洗牌 Random 角色
+• 修正從 Network Mode 回到主選單時，滑鼠點擊被重複判定兩次而誤觸全螢幕切換的問題
+• 新增 Cost 制（成本制）VS 模式
+   – 每隊有一條共用的「隊伍成本槽」（預設 ₡300）。Independent（獨立）玩家會視作一人隊伍。
+   – 每個角色都有固定 Cost：普通英雄 ₡100、小兵 ₡50、高級兵 ₡75、Boss ₡150–₡300。
+   – 當角色被擊敗時，會從隊伍成本槽扣除該角色的 Cost。扣除成本後...
+     ◦ 情況 1：成本仍然大於 0
+       角色會復活。若扣除後剩下的成本不足以再支付下一次復活的完整 Cost，角色將以 HP / MP 按比例扣減的狀態復活。
+     ◦ 情況 2：成本降至 0
+       全隊會立即判定落敗（瞬間死亡），並且不再有任何角色復活。
+   – Cost 越高的角色通常越強，但每次陣亡的代價也越高。
+   – 在 HP／MP 介面中，玩家名稱旁會以 ⚄（骰子）標示隨機角色；陣亡次數則以 ✟[數字] 顯示。
+   – 在對戰結算畫面中，每位玩家可查看本局使用過（陣亡＋復活）的所有角色（最多 10 個）以及陣亡次數。
+• VS 與 Championship 模式新增「時限」：
+   – 倒數時間歸零時，對戰結束。
+   – 在「成本制」中，剩餘 Cost 較多的一方獲勝。若相同，則以存活比例較高者（生存人數 ÷ 全隊人數）獲勝；若仍相同，則以成員平均 HP 較高者獲勝。
+• 更多遊戲選項，你可以選擇是否允許：
+   – 掉下物件
+   – 變身 (成為 LouisEX)
+   – 復活洗牌（只適用於「隨機角色」＋「成本制」）：若玩家選擇隨機角色，每次復活都會隨機安排另一角色，系統會盡量避免重複。
+• 如果 Rudolf 已變身成其他角色，他在死亡時會變回 Rudolf。（這是為了避免一連串可能出現的復活Bug）
+
+<hr><b>版本 2.15a 更新（2025 年 11 月 17 日）</b>
+
+• 修正啟動線上模式（Steam）時亂數種子總是相同的問題，並修復因此造成的副作用（例如：只會掉下迴力鏢的bug）。
+• 大廳介面現在會顯示玩家所在地區。
+• 大廳列表現在會顯示各個大廳的延遲。
+• 修復大廳列表讀取時可能卡住的問題。
+
+<hr><b>版本 2.15 更新（2025 年 11 月 16 日）</b>
+
+• 線上模式（Steam 連線系統）Alpha 版本已推出。
+   – 現在不需要再輸入 IP 地址、設定 Port Forwarding，也不需要啟動外部伺服器程式。只要在主選單建立或加入房間即可與朋友連線遊玩。
+   – 請注意，這是早期 Alpha 版本，可能會有各種問題，之後也會持續改進。如果你遇到任何 Bug，歡迎回報。
+
+• 設定選單已移除「放大（較窄）」視角的選項， 因為有很多回報表示這個功能幾乎沒有用。（同時也觀察是否有玩家希望未來恢復。若否，移除反而能簡化介面、避免混淆。）
+
+• 降低了解鎖角色所需的成就數量。Bat、LouisEX、Firzen、Template 現在改為在成就數 26、30、40、50 時解鎖（原本為 30、40、50、60）。
+
+• 以下是我現時的後續計畫：
+   – 在下一個小更新中，我會優先修復自 2.14 版以來回報的問題。
+   – 之後會持續改進線上模式（Steam 連線系統）Alpha。
+   – 接著我會提升改版（Mod）製作體驗（例如：允許從主選單載入mod檔案、提供工具將舊版mod檔案轉換成 LF2R 新格式）。
+   – 再來會研究加入 Steam Workshop 的可行性，並研究讓線上模式能分享mod檔案。
+   – 然後開始製作第六關（Stage 6）。
+
+<hr><b>版本 2.14d 更新（2025 年 9 月 29 日）</b>
+
+• 快速修正： 修復 Justin／Bat 的幀資料錯誤，問題導致某一幀在接收到 D↑A 或 D↓A 時使遊戲當機。
+
+<hr><b>版本 2.14c 更新（2025 年 9 月 28 日）</b>
+
+• 快速修正：修正 Henry／Hunter 在施放「奔跑＋跳躍＋背向攻擊」時會回復小量 MP／HP 的問題。
+
+Steam 配對網路模式仍在開發中。因突發事務，目前完成約 40%，進度暫時減慢——我目前行程已滿，暫時無法繼續處理。待情況許可我會盡快回到這項工作，感謝耐心等候。另外，因有粉絲對上面的Bug表達了強烈不滿，我優先推出快速修補。
+
+<hr><b>版本 2.14/2.14b 更新（2025 年 8 月 21 日）</b>
+
+• 修正「手柄」/「控制設定」的問題
+   – 修正使用某些品牌的手柄連接時，遊戲會卡死的問題。 
+   – 重置鍵盤設定時，不會再改變手柄的選擇設定。
+   – 在 Steam Deck 上停用外置手柄（內建的那個仍可使用；原因請參考下方的「技術背景」）。同時在介面中更清楚地提示玩家：Steam Deck 內建手柄可透過官方控制配置作為P1鍵盤使用。
+• 全螢幕體驗改善
+   – 偵測到在使用 SteamDeck 時，啟動時將自動進入全螢幕。
+   – 當顯示器解析度小於遊戲預設尺寸時，啟動時將自動進入全螢幕。
+   – 在非 SteamDeck 環境下，全螢幕現在可在主選單中選擇，並新增為控制設定（右上角）的按鈕。這是因為觀察到有些玩家不知道可以使用全螢幕。
+• 修正全螢幕時切換的凍結問題：當全螢幕下切換至其他應用程式，或切換到其他全螢幕應用程式時，會導致所有連接住的網絡玩家一同卡住。不過在修正後，在某些極端情況下，如果作業系統誤判遊戲為「最小化」（即使實際並非如此），仍可能發生凍結問題。
+• 修正「控制權劫持」問題：當 P1 在遊戲模式選單中按攻擊鍵進入 VS 模式，隨後 P2 在 0.03 秒內按攻擊鍵，再接著 P1 再次按攻擊鍵加入時，會導致 P1 劫持 P2 的控制並以 P2 身份加入。
+• 修正一些存在了四分一個世紀的舊 Bug
+   – 修正 Louis 與 LouisEX 部分錯誤的 vrest 與 arest 數值。（這會導致一些有趣的問題，例如 Louis 以 D ↑ J 攻擊某個敵人（非他抓住的對象）後，在一段時間內無法再攻擊該敵人。）
+   – 修正同時被擊中與進行非攻擊互動（拾取/抓取）時，倒地/受傷動作會被取消並繼續拾取/抓取的問題。現在改為忽略拾取/抓取。
+   – 修正帶有「自動防禦」的角色（如 Julian、Louis）在拿著石頭時被擊中，即使防禦未被破壞，石頭仍會掉落的問題。現在在防禦未破壞的情況下，石頭將保持在手上。
+   – Hunter 在撿起道具時將不再消耗 MP（MP 僅應在發射箭矢時消耗，而非撿道具時）
+• 回溯部分 v2.13 的改動並修正一些改動帶來的新問題
+   – Louis 與 LouisEX 現在即使 MP 不足仍可使用 →→A 或 →→JA，只是施展後 MP 會變成零。
+   – 回溯 v2.13 的越界距離限制改動，因為該改動讓敵人出現過快並過於集中。
+   – 調整 AI 在避免越界對手時的判斷。現在他們不會再把人質或非敵人視為越界目標。
+• [在 v2.14b 加入]:
+   – 完全移除越界距離限制
+   – AI 不再對界外物件感興趣，也不會嘗試前往拾取
+
+v2.14b 會先發佈到「Beta分支」。當確認穩定後，「預設分支」將會從 v2.12 直接更新到 v2.14b（跳過 v2.13，因為它不夠穩定）
+
+我原本計劃處理 Steam Input 的整合（用來解決它與我現有手柄實作的衝突），但現在決定暫時擱置，將重點轉回到網路連線功能。我已經在手柄支援上花了比原先預期更多的時間。
+
+對玩家的影響（自 v2.14 起）
+   – PC 與 Mac： 仍然可以使用手柄（但不支援遠端遊玩）。不過請務必停用此遊戲的 Steam Input，以避免衝突（Steam Input 應該為預設停用，但亦有可能無意中被「覆蓋設定」啟用了）。
+   步驟： Steam 遊戲庫 → 右鍵點選遊戲 → 「內容...」 (简中: 「属性...」) → 控制器 → 「[遊戲名稱]的替用配置」(简中: 「[游戏名称]的先决替代」) → 停用 Steam 輸入 (简中:「禁用 Steam 输入」)。
+   – Steam Deck： 內建手柄可以透過官方配置對應到玩家P1的鍵盤操作。不過，目前不支援外接藍牙手柄進行本地多人遊戲，因為 Steam Input 會干擾遊戲的原生手柄處理。不過 Deck 玩家依然可以透過加入網路對戰和其他人一起遊玩。
+
+技術背景（給有興趣的朋友）：
+Steam Input 是 Steam 用戶端提供的一個功能，會攔截所有手柄輸入並轉換成統一的 API。就我所知，它也是唯一讀取 Steam Deck 內建手柄輸入的方法（當手柄沒有假裝成鍵盤時）。我的遊戲目前是透過 JavaScript 的原生 GamePad API 來讀取手柄，但這會和 Steam Input 衝突（因為輸入被攔截並轉送到 steamClient.input.getControllers）。
+
+我原本計劃透過 steamworks.js 來把手柄讀取完全遷移到 Steam Input，但不同裝置與平台、設定的組合實在太多太複雜，實作和測試需要花非常多時間，而有關 steamworks.js 的參考資料和範例又很少。這樣投入的風險太高，最後甚至可能因為遇到沒有解法的障礙而無法完成。如果因此再拖慢網路對戰的進度，只會讓玩家更失望，所以我決定暫時擱置這部分的工作。
+等到未來有更清晰的方向（例如有可靠的範例或教學）時，我會再重新考慮整合 Steam Input。目前我的首要目標，是先把網路對戰做好。
+
+一些個人感想
+回顧這次更新，我意識到自己低估了手掣支援的複雜性，這對我的士氣造成了影響。原本我希望能解決一個能讓許多玩家驚喜的問題，但過程中卻常常感到停滯不前。我投入了大量心力後才發現，gamepad API 與 Steam Input 存在衝突，而必須推翻重做的想法令人十分痛苦。這種挫折感開始消磨我的動力，也許這甚至是倦怠的徵兆。這正是我決定不再在這個問題上花更多時間的原因之一。
+不過，我知道仍有許多人一直支持著我，對此我由衷感激。起伏本來就是獨立開發的一部分，我會繼續前進，把重心轉向網絡對戰，並盡自己最大的努力。感謝大家的支持。
+<hr><b>版本 2.13 更新（2025 年 8 月 14 日）</b>
+
+• 支援遊戲手柄!!!
+• SteamDeck/遊戲手柄改進
+   – 新增官方 SteamDeck 控制配置
+   – 主選單現在可以使用鍵盤或遊戲手柄操作（之前僅支援滑鼠）
+   – 現在可以按 ESC（或 SteamDeck 的選單鍵）退出「License and Notes」
+   – 「Roadmap」、「Update Log」、「How To Unlock」及「Licenses and Notes」現在都可用遊戲手柄操作（僅支援 Xbox、PS4、PS5、Switch 手柄）
+   – 在暫停畫面中，「Resume」、「Step」、「Zoom」、「Hide-info」、「Full-Screen」、「Restart」現在都可以直接點擊，讓使用 SteamDeck 的玩家無需鍵盤即可操作
+• 操作手感改進
+   – 當攻擊鍵觸發跳躍攻擊或衝刺跳躍攻擊時，按鍵將不再被消耗，落地後仍可觸發其他招式（例如 D → A 或 D ↑ A）
+   – 跳躍鍵即使觸發了跳躍並被消耗（例如不再會用於觸發 D ↑ J），仍可用於觸發「D J A」
+   – D ↑ J 之後再按 A 將不會觸發 D ↑ A
+• 降低普通與簡單難度下 AI 的靈敏度（請提供反饋，我可能會在未來版本中進一步調整）
+• 在闖關模式中，AI 隊友看到電腦對手位於邊界外時，會避免接近以防被伏擊。電腦對手出現後，其可停留在邊界外的距離會逐漸縮短，降低遠距離伏擊的可能性。
+• 修正被攻擊時漂浮+定格+無反應的問題（Louis 較容易出現）
+• 預設的 Z 軸碰撞寬度先前從 15 單位增加到 17 單位，現已調回 16 單位，因部分玩家反映 17 感覺過大
+• 統計數據修正
+   – 修正 Freeze 與 Firen 融合成 Firzen 再分離後，其中一名玩家的統計數據被清零的問題
+   – 當玩家操作的 Firen 與 Freeze 融合成 Firzen 並完成一個關卡時，成就計數仍會將 Firen 及 Freeze 視為有參與。
+   – Rudolf 在變身為其他角色後，現在成就計算中仍會視為 Rudolf
+• 當 Louis（或 Louis-EX）MP 不足時施放 →→A 或 →→JA，現在會改為普通拳或跳躍攻擊，而不是沒有反應
+• Rudolf 和 Henry 在撿起道具時將不再消耗 MP（MP 僅應在發射忍者鏢或箭矢時消耗，而非撿道具時）
+• 修正人類玩家在戰鬥模式中選擇小兵角色時，倒地起身後沒有無敵時間的問題
+• 移除 F10 縮放快捷鍵，因其與部分玩家的 GeForce 錄影快捷鍵衝突。玩家仍可透過右上角設定或暫停時按 Z 切換縮放
+• 當 HP < 30%（先前為 33.33%）時會出現「嘴角血跡」效果，讓「出現嘴角血跡」與 Firzen 融合及 Louis-EX 變身條件一致，使其成為更有用的提示
+• Woody 跑動攻擊的第二下傷害從 5 單位提升至 25 單位，並會令敵人硬直
+• 由於持續收到螢幕過窄的反饋，表示仍有玩家不知有縮小視角功能，現在預設改為縮小視角（更廣的視野）而非放大視角（更近的視野）
+• 當控制設定中的玩家名稱留空時，現在會自動填入「P#」（# 為 1~4，依位置而定），防止玩家用空白名稱假裝成電腦玩家
+• 修正多名玩家共用相同鍵盤左或右鍵時，在選擇電腦數量時游標會跳過多格的問題
+• 修正 Julian 招式表中 MP 資訊錯誤
+• 在網路模式中，較慢機器的快轉追趕時間進一步縮短到幾乎可以忽略的程度。
+• 移除了控制設定中的「取消」按鈕，因為遊戲手柄是動態的（可隨時連接、斷開或易位）。「取消」按鈕的作用是「忘記」最近的變更，但這與遊戲手柄的動態特性有所衝突，可導致手柄連結失效或手柄設定被意外交換。
+• 修正了在網路遊戲中，當對方正在設定控制鍵時，本機畫面本應顯示藍色畫面並提示「等待中，NAME(S) 正在設定控制按鍵...」，但現在藍色畫面未出現且遊戲直接卡住的問題。
+• 進一步改進了針對部分鍵盤右側 Shift 鍵無法使用問題的潛在修復。
+
+這次更新花費的時間比我預期的長。收到我的 SteamDeck 與所有遊戲手柄後，我原以為加入遊戲手柄支援會很快也很簡單。由於遊戲手柄支援與網路模式改進的請求量差不多，我決定先優先處理遊戲手柄。
+然而，實作過程比想像中複雜，要處理許多特殊情況。由於遊戲是用 JavaScript 編寫，我受到 Gamepad API 的一些限制，例如手柄在按下任何按鍵前會處於「休眠」狀態、沒有固定的 UUID 來識別重啟後的同一手柄，以及有時內部的ID字串會忽然缺少一部分，導致辨識困難。Switch Pro 手柄尤其麻煩，我手上兩個與電腦連接後延遲明顯高於其他手柄，而且與多手柄同時使用時有時會變成按鍵全無反應。這些似乎是底層 API 或驅動的問題，因此我無法完全修復。
+另一個挑戰是偵測遊戲是否在 SteamDeck 上運行。我使用的 Steamworks.js API 在這方面不太順利，因此原本打算讓遊戲在 SteamDeck 上預設全螢幕啟動的計劃暫時無法實現。更棘手的是，似乎有一層驅動程式會隱藏 SteamDeck 內建手柄的真實 ID，使辨識變得更加困難。暫時的解決方案是，SteamDeck 玩家可以使用官方控制配置（將手柄按鍵對應為鍵盤按鍵）來遊玩。（是的，這確實有點奇怪——SteamDeck 玩家在控制設定中選擇的是「鍵盤」，但實際上用的是內建手柄。）我計劃未來再解決這個問題，不過目前會優先處理網路對戰的改進。
+不過，PS4/PS5 和 Xbox 手柄現在已能良好支援，其他無品牌手柄也能使用，但體驗可能不如前者理想。希望這能提升你的遊戲體驗。本版本將先推出 Beta 版，誠摯希望你能提供寶貴的意見來幫助我進一步改進。感謝你的耐心等待，也希望你喜歡這次的更新！
+<hr>
+<b>版本 2.12 更新（2025 年 8 月 2 日）</b>
+
+• 現已支援 Steam Overlay（僅限 Windows；Mac 尚未支援，可能是 Steamworks.js 的問題）。現在可以更方便地截圖或錄影。
+• 現已支援 Steam Remote Play（僅限 Windows，因需配合 Steam Overlay。連線玩家可能沒有聲音——這可能可透過玩家的 Steam 設定解決，無
+• 現在可以稍微縮小戰鬥畫面來拉闊視野，以更接近原版 LF2 的視角。只須按 F10 或點擊右上角的縮放按鈕（需先展開設定按鈕）。原本背景顯示為 712x400 單位，現在縮小後為 794x400，畫面上下會出現黑邊。此更改是為了回應許多玩家反映視野變窄，影響操作感與遊戲體驗。
+• 競技場背景已恢復為 794x400（v2.11 中為 712x400），並且在進入競技場時會自動觸發縮小(拉闊)視角（結束後還原），以確保該背景不會出現橫向捲動。
+• 將攻擊判定框的預設 z 寬度從 15 單位增加到 17 單位。由於角色比原版 LF2 稍微高了一點，有玩家反映感覺攻擊判定好像變窄了。此更改後，對抗 AI 時應該會稍微輕鬆一些，因為 AI 不知道這項調整。
+需改動遊戲程式碼。如果你知道解法，請告訴我）。
+• 輸入判定與操作手感改善：
+   – 按下 D → → J 不再觸發 D → J。
+   – 先按 →，再同時按 D → J，不會再觸發奇怪的衝刺+防禦組合動作。（此問題在修復前，某些鍵盤可能因多鍵輸入時Jam鍵而無法重現。不過我相信這項修正對未來的手掣體驗有很大幫助）
+   – 跑步（→ →）後，同時按 J 與 A，現在會正確觸發衝跳攻（原本會變成跑攻，跳躍被忽略，因為攻擊鍵先被判定）
+   – 如果 J 或 A 已觸發動作，該按鍵將被消耗，不會再觸發其他動作（與原版 LF2 不同）
+   – 但 A 鍵若用於翻滾+撿物品，則不會被消耗，避免拾取道具時無意中阻止招式觸發
+• 修復在小部分 Windows 電腦上啟動時出現的「A JavaScript error occurred in the main process...」錯誤，方法是透過在 SteamWorks 設定中加入 Visual C++ Redistributable 套件。
+• 修正遊戲在生存模式第25關當機的問題。
+• 新增血條閃爍效果（當角色正在被治療時）。
+• 修正撿物品時被打中導致道具卡在空中無反應的問題。
+• 潛在修復撿物品同時被打導致遊戲閃退的問題（花了幾小時仍無法重現，但發現可能的根本原因並加上防禦性處理。若問題仍在，請回報）。
+• 修正 Julian 使用上鉤拳攻擊時會跳得異常高的問題。
+• 修正 Henry 在奔跑中向後射擊時，武器卡在空中的問題。
+• 修正持石頭與 John 的防護壁碰撞時，石頭會消失再瞬間出現在手上的錯誤（應為掉落在地上）。
+• 修正 Alt+Tab 切出再切回遊戲時，遊戲仍判定 Alt 鍵被按住的問題。
+• 所有關卡成就現在會自動解鎖較低難度。例如達成 Stage 3 - Difficult，也會同時獲得 Normal 與 Easy。首次啟動 v2.12 時會自動檢查並補發未取得的低難度成就。
+• 潛在修復某些鍵盤右 Shift 鍵無效的問題（我無法自行驗證，但現在若系統無法區分左右 Shift，將預設為右 Shift。因為修復前該鍵本來就無法使用，所以不會有副作用）。
+• 功能鍵變更：
+   – ESC 現在也可作為暫停鍵
+   – 暫停 + Q 現在可重新開始遊戲
+   – 暫停 + N 現在可逐幀播放（Step Pause）
+   – 暫停 + H 現在可隱藏暫停與說明文字
+   – 暫停 + Z 現在可切換縮放
+   此更改是因有玩家反映功能鍵操作不便，部分鍵盤需按 Fn 鍵才可觸發功能鍵。
+• 設定按鈕現在可收合/展開，因為其使用頻率不到 1%，但佔用畫面空間。
+• Windows 下的遊戲圖示現在看起來更好一些。但在工作管理員中仍顯示 Electron 的預設圖示。我嘗試修正了 2 小時仍未能解決。
+• 修正更換帳號並重新啟動遊戲時的成就問題：
+   – 成就可能在帳號之間洩漏
+   – 成就數量顯示錯誤，需重新啟動或取得新成就才會更新
+• 加入成就的中文名稱與描述。
+• 修正某些外國鍵盤配置中「.」未被識別為「Period」而導致解鎖碼無法正確輸入的問題。
+• 新增Debug Log（保存在本機，大小始終維持在 1MB 以下），以協助調查白屏問題或其他較難以察覺的問題。
+• 小修正與調整：
+   – 網路對戰房間列表的刷新按鈕移至左上角，避免與設定按鈕重疊
+   – 暫停時背景不再滾動
+   – 全螢幕模式下，畫面底部的灰線已移除
+   – 修正某些結束場景下暫停/加速狀態會殘留的問題
+   – 修正了 Jan 的招式列表中的英文錯字
+   – 為 Julian 的「殘影」招式補上「MP：5」的說明
+   – 在基本動作說明中，將「後空翻」改為「受身」，這是遊戲中更常見的用語
+
+由於本次更新動到許多核心程式碼，V2.12 將先作為 Beta 版本釋出，確認穩定後才會設為預設版本。
+原本打算用 2～3 天修 bug，之後改善網路對戰。但最近一些私人瑣事讓我難以長時間專注，因此利用零碎時間先修復最嚴重與最多人反映的問題。我也在等 Steam Deck 寄到，之後會再處理手掣支援。如果中間發現手掣問題可以快速修正，我會先處理。感謝各位支持，請繼續關注！
+<hr>
+<b>版本 2.11 更新（2025 年 7 月 26 日）</b>
+
+• 修正角色數值問題，現在每位角色的移動屬性各不相同。
+• 修正 Louis 跳躍高度過低的問題。
+• 修正鍵盤輸入相關問題：
+   – 現在開啟 Caps Lock 也能正常輸入。
+   – 支援 Shift 和 Ctrl 鍵（Alt 鍵仍因系統選單衝突仍然無法使用）。
+• 功能鍵與快捷鍵調整：
+   – 現在改為使用 F1～F9，取代原本的 Shift 1～9。
+   – 使用 Alt [ 或 Alt ] 調整音效音量，Alt , 或 Alt . 調整背景音樂音量。
+• 在右上角新增了 BGM/SFX 音量調整介面，初始值為 BGM：40，SFX：60。
+• 在右上角新增了「出招表」按鈕，方便隨時查看，因為有些玩家覺得從選單列或控制設定中開啟不太方便。
+• Coliseum 背景寬度現在與畫面一致，不再產生橫向捲動。
+• 銅與銀成就現在也能在較高難度下解鎖（例如與兩名隊友通關第 5 關困難模式，即可同時獲得金、銀、銅三項成就）。
+• 遊戲模式選單右下角新增「離開」按鈕。
+• 視障玩家的可及性改善：
+   – 新增立體聲音效（原本為單聲道）。例如畫面左側發生事件時，左聲道會較大聲。
+   – 主選單現在可使用鍵盤操作開始遊戲。（按 1 開始本地遊戲，按 2 開始網路對戰）
+• 「解鎖碼」現在可在角色選擇畫面輸入（即使某鍵與攻擊鍵重疊也能正常使用）。
+• VS 模式現容許「Crazy」難度選項。
+• 現在允許多位玩家共用相同的操作鍵（衝突的按鍵會以紅框標示，但仍可點擊「確定」繼續）。
+• 修正 VS 模式中按 F8 並掉落過多物品時導致遊戲當機的問題。
+• 修復了在第一關最後階段（出現兩個 Mark 時）遊戲失敗會導致當機的問題。
+• 將 F5 加速倍率從 30 倍降為 5 倍，因為許多玩家反映原本速度太快、難以控制。
+• 稍微降低畫面捲動速度，使體驗更舒適、減少暈動感。
+• 網路模式中若發生延遲，較慢的電腦現在快轉追趕其他電腦的時間大大縮短，以減輕不適感。
+• 修正 Jack 的招式表中的中文錯字。
+• 修正 1 對 1 淘汰賽畫面錯誤顯示為 2 對 2 的問題。
+• 修正了在高解析度顯示器下，控制設定中玩家名稱輸入框過小的問題。
+
+注意：遊戲雖已正式推出，但這只是個開始 — 我仍持續根據大家的回饋改進與豐富內容。非常感謝你們的支持，敬請期待後續更新！
+<hr>
+<b>版本 2.1 （2025 年 7 月 19 日）</b>
+在 Steam 推出的第一版本。
+`;
+
+    const englishButton = document.getElementById('btn-en');
+    const chineseButton = document.getElementById('btn-zh');
+    const contentDiv = document.getElementById('content');
+
+    function showEnglish() {
+      englishButton.focus();
+      document.getElementById('content').innerHTML = englishUpdatelog;
+      document.getElementById('title').innerHTML = 'LF2 - Update Log';
+      englishButton.classList.add('selected');
+      chineseButton.classList.remove('selected');
+      contentDiv.scrollTop = 0;
+    }
+
+    function showChinese() {
+      chineseButton.focus();
+      document.getElementById('content').innerHTML = chineseUpdatelog;
+      document.getElementById('title').innerHTML = 'LF2 - 更新日誌';
+      chineseButton.classList.add('selected');
+      englishButton.classList.remove('selected');
+      contentDiv.scrollTop = 0;
+    }
+
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        pressEsc();
+      } else if (event.key === 'ArrowUp') {
+        pressUp();
+      } else if (event.key === 'ArrowDown') {
+        pressDown();
+      } else if (event.key === 'ArrowLeft') {
+        pressLeft();
+      } else if (event.key === 'ArrowRight') {
+        pressRight();
+      }
+    });
+
+    // Show English by default
+    showEnglish();
+
+    function pressUp() {
+      contentDiv.scrollTop -= 500;
+    }
+    function pressDown() {
+      contentDiv.scrollTop += 500;
+    }
+    function pressLeft() {
+      showEnglish();
+    }
+    function pressRight() {
+      showChinese();
+    }
+    function pressEsc() {
+      window.close();
+    }
+
+    window.addEventListener("gamepadconnected", (evt) => {
+        addGamepad(evt.gamepad);
+    });
+    loopStarted = false;
+    function addGamepad(gamepad) {
+        if (!loopStarted) {
+            requestAnimationFrame(updateStatus);
+            loopStarted = true;
+        }
+    }
+
+    let escDown = false;
+    let upDown = false;
+    let downDown = false;
+    let leftDown = false;
+    let rightDown = false;
+    function updateStatus() {
+        let escDown0 = escDown;
+        let upDown0 = upDown;
+        let downDown0 = downDown;
+        let leftDown0 = leftDown;
+        let rightDown0 = rightDown;
+        escDown = false;
+        upDown = false;
+        downDown = false;
+        leftDown = false;
+        rightDown = false;
+
+        for (const gamepad of navigator.getGamepads()) {
+            if (!gamepad) continue;
+
+            for (const [i, button] of gamepad.buttons.entries()) {
+                if (button.pressed) {
+                    if (i==12) {
+                      if (!upDown0) pressUp();
+                      upDown = true;
+                    }
+                    if (i==13) {
+                      if (!downDown0) pressDown();
+                      downDown = true;
+                    }
+                    if (i==14) {
+                      if (!leftDown0) pressLeft();
+                      leftDown = true;
+                    }
+                    if (i==15) {
+                      if (!rightDown0) pressRight();
+                      rightDown = true;
+                    }
+                    if (i==9) {
+                      if (!escDown0) pressEsc();
+                      escDown = true;
+                    }
+                }
+            }
+
+            for (const [i, axis] of gamepad.axes.entries()) {
+                if (axis>.5) {
+                    if (i==1) {
+                      if (!downDown0) pressDown();
+                      downDown = true;
+                    }
+                    if (i==0) {
+                      if (!rightDown0) pressRight();
+                      rightDown = true;
+                    }
+                }
+
+                if (axis<-.5) {
+                    if (i==1) {
+                      if (!upDown0) pressUp();
+                      upDown = true;
+                    }
+                    if (i==0) {
+                      if (!leftDown0) pressLeft();
+                      leftDown = true;
+                    }
+                }
+            }
+        }
+        requestAnimationFrame(updateStatus);
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,282 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>LF2 Roadmap</title>
+  <style>
+    body {
+      background-color: #051c55;
+      font-family: 'Roboto', 'Noto', sans-serif;
+      font-size: 16px;
+      overflow-x: hidden;
+      margin: 0;
+      color: white;
+    }
+
+    #toolbar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 10px;
+      box-sizing: border-box;
+    }
+
+    #lang-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      font-weight: bold;
+      font-size: 14px;
+      color: white;
+      padding: 2px 6px;
+      box-sizing: border-box;
+      border-radius: 4px;
+    }
+
+    .selected {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+
+    #close-btn {
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    #title {
+      position: fixed;
+      top: 25px;
+      height: 30px;
+      width: 100%;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 2px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    #content {
+      position: absolute;
+      top: 60px;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      border: 1px solid white;
+      padding: 10px 10px 10px 10px;
+      overflow-y: auto;
+      background: #051c55;
+      color: white;
+      white-space: pre-wrap;
+      line-height: 1.6;
+    }
+
+    b {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="title">
+    Little Fighter 2 Remastered Roadmap
+  </div>
+  <div id="toolbar">
+    <div id="lang-buttons">
+      <button id="btn-en" class="btn" onclick="showEnglish()">English</button>
+      <button id="btn-zh" class="btn" onclick="showChinese()">中文</button>
+    </div>
+    <div id="close-btn" onclick="window.close()">Esc ╳</div>
+  </div>
+
+  <div id="content"></div>
+
+  <script>
+    const englishRoadmap = `Here’s the planned roadmap for future updates, listed by priority. Items <b>without a [DLC] tag</b> will be included in future updates <b>for free</b> once completed. If unexpected and unsolvable technical challenges arise, some features may be delayed or even canceled, but I’ll do my best to complete at least 70% of the plan.
+
+• <b>Network mode using Steam matchmaking</b>: So players no longer need to enter IP addresses or set up port forwarding.
+• <b>Cost-based VS mode</b>: In this mode, each character has a cost value based on their strength. Teams share a total cost budget.
+&nbsp;&nbsp;&nbsp;&nbsp;• When a player is defeated, their character's cost is deducted from the team’s remaining budget.
+&nbsp;&nbsp;&nbsp;&nbsp;• If the budget hits zero, the team loses.
+• <b>Support for gamepads</b>.
+• <b>Support Steam Big Picture Mode</b> (under consideration).
+• <b>[DLC] Artbook</b>: Includes full-resolution sprites, illustrations, and outline sketches.
+• <b>[DLC] Original Character Pack</b>: Playable character using the original 2002 LF2 sprite.
+• <b>[DLC] Unlock All Content</b>: Instantly unlock all stages and characters (all content can still be unlocked through gameplay; this DLC is just for those who want to show support).
+• <b>Stage 6 with new characters</b>: Note that the boss of Stage 6 will be extremely overpowered and won’t be available as a playable character for regular players.
+• <b>[DLC?] Workshop Support</b> (under consideration): Might allow users to modify sprites and backgrounds more easily.
+• Remaster the sprite of the character Template.
+• ...Plus some old bugs to fix, and a few fan-requested features, such as the option to disable item drops or set a time limit in VS Mode. These fan requests might even be implemented before some of the features mentioned above!
+
+30 Jun 2025 • Marti Wong`;
+
+    const chineseRoadmap = `以下是我規劃中的未來更新項目，依優先順序排列。<b>沒有 [DLC] 標記的項目</b>，完成後將會<b>免費</b>提供於未來的更新中。如果遇到無法預料且無法解決的技術困難，有些功能可能會被延後甚至取消，但我會盡全力完成至少 70% 的計劃。
+
+• <b>使用 Steam 配對系統的網路對戰模式</b>：讓玩家不再需要手動輸入 IP 或設定 Port Forwarding。
+• <b>「Cost 制」的VS模式</b>：每個角色會有一個代表其戰力的 Cost 數值，隊伍共享總 Cost 預算。
+&nbsp;&nbsp;&nbsp;&nbsp;• 當玩家被擊敗時，該角色的 Cost 會從隊伍預算中扣除。
+&nbsp;&nbsp;&nbsp;&nbsp;• 預算歸零則該隊輸掉比賽。
+• <b>支援手掣</b>。
+• <b>支援 Steam 的 Big Picture 模式</b>（考慮中）。
+• <b>[DLC] 設定集畫冊</b>：包含高解析角色圖、插圖與線稿。
+• <b>[DLC] 原版角色包</b>：使用 2002 年版 LF2 原版角色圖的可玩角色。
+• <b>[DLC] 全內容解鎖包</b>：立即解鎖所有關卡與角色（即使不購買此 DLC，也可透過遊戲進程逐步解鎖，這是給想額外支持的玩家的選項）。
+• <b>第六關與新角色登場</b>：注意，第六關的 Boss 將會非常強大，不會開放給一般玩家使用。
+• <b>[DLC?] 工作坊功能</b>（考慮中）：可能開放用戶更方便地編輯角色圖與背景。
+• 重製角色 Template 的動作圖。
+• ...此外，還有一些舊有的 bug 需要修復，以及一些由玩家提出的功能建議，例如在VS模式中關閉道具掉落或設定時間限制。這些玩家建議的功能有可能會先於某些上述項目落實！
+
+2025年6月30日
+Marti Wong`;
+
+    const englishButton = document.getElementById('btn-en');
+    const chineseButton = document.getElementById('btn-zh');
+    const contentDiv = document.getElementById('content');
+
+    function showEnglish() {
+      englishButton.focus();
+      document.getElementById('content').innerHTML = englishRoadmap;
+      document.getElementById('title').innerHTML = 'Little Fighter 2 Remastered Roadmap';
+      englishButton.classList.add('selected');
+      chineseButton.classList.remove('selected');
+      contentDiv.scrollTop = 0;
+    }
+
+    function showChinese() {
+      chineseButton.focus();
+      document.getElementById('content').innerHTML = chineseRoadmap;
+      document.getElementById('title').innerHTML = 'LF2 未來更新計劃';
+      chineseButton.classList.add('selected');
+      englishButton.classList.remove('selected');
+      contentDiv.scrollTop = 0;
+    }
+
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        pressEsc();
+      } else if (event.key === 'ArrowUp') {
+        pressUp();
+      } else if (event.key === 'ArrowDown') {
+        pressDown();
+      } else if (event.key === 'ArrowLeft') {
+        pressLeft();
+      } else if (event.key === 'ArrowRight') {
+        pressRight();
+      }
+    });
+
+    function pressUp() {
+      contentDiv.scrollTop -= 200;
+    }
+    function pressDown() {
+      contentDiv.scrollTop += 200;
+    }
+    function pressLeft() {
+      showEnglish();
+    }
+    function pressRight() {
+      showChinese();
+    }
+    function pressEsc() {
+      window.close();
+    }
+
+    window.addEventListener("gamepadconnected", (evt) => {
+        addGamepad(evt.gamepad);
+    });
+    loopStarted = false;
+    function addGamepad(gamepad) {
+        if (!loopStarted) {
+            requestAnimationFrame(updateStatus);
+            loopStarted = true;
+        }
+    }
+
+    let escDown = false;
+    let upDown = false;
+    let downDown = false;
+    let leftDown = false;
+    let rightDown = false;
+    function updateStatus() {
+        let escDown0 = escDown;
+        let upDown0 = upDown;
+        let downDown0 = downDown;
+        let leftDown0 = leftDown;
+        let rightDown0 = rightDown;
+        escDown = false;
+        upDown = false;
+        downDown = false;
+        leftDown = false;
+        rightDown = false;
+
+        for (const gamepad of navigator.getGamepads()) {
+            if (!gamepad) continue;
+
+            for (const [i, button] of gamepad.buttons.entries()) {
+                if (button.pressed) {
+                    if (i==12) {
+                      if (!upDown0) pressUp();
+                      upDown = true;
+                    }
+                    if (i==13) {
+                      if (!downDown0) pressDown();
+                      downDown = true;
+                    }
+                    if (i==14) {
+                      if (!leftDown0) pressLeft();
+                      leftDown = true;
+                    }
+                    if (i==15) {
+                      if (!rightDown0) pressRight();
+                      rightDown = true;
+                    }
+                    if (i==9) {
+                      if (!escDown0) pressEsc();
+                      escDown = true;
+                    }
+                }
+            }
+
+            for (const [i, axis] of gamepad.axes.entries()) {
+                if (axis>.5) {
+                    if (i==1) {
+                      if (!downDown0) pressDown();
+                      downDown = true;
+                    }
+                    if (i==0) {
+                      if (!rightDown0) pressRight();
+                      rightDown = true;
+                    }
+                }
+
+                if (axis<-.5) {
+                    if (i==1) {
+                      if (!upDown0) pressUp();
+                      upDown = true;
+                    }
+                    if (i==0) {
+                      if (!leftDown0) pressLeft();
+                      leftDown = true;
+                    }
+                }
+            }
+        }
+        requestAnimationFrame(updateStatus);
+    }
+
+    // Show English by default
+    showEnglish();
+  </script>
+
+</body>
+</html>

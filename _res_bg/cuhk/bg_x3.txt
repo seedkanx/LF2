@@ -1,0 +1,70 @@
+name: The_Beacon 
+width: 1400   zboundary: 425 510   
+shadow: _res_bg/cuhk/s_x3  shadowsize: 37 9
+upscale: 3
+layer:
+  _res_bg/cuhk/back1_x3
+  transparency: 0 width: 878  x: 0  y: 128
+layer_end
+
+layer:
+  _res_bg/cuhk/back2_x3
+  transparency: 0 width: 1019  x: 0  y: 128
+layer_end
+
+layer:
+  _res_bg/cuhk/back3_x3
+  transparency: 0 width: 1184  x: 0  y: 128
+layer_end
+
+layer:
+  _res_bg/cuhk/ground1_x3
+  transparency: 0 width: 1266  x: 0  y: 435
+layer_end
+
+layer:
+  _res_bg/cuhk/ground2_x3
+  transparency: 0 width: 1350  x: -25  y: 455
+layer_end
+
+layer:
+  _res_bg/cuhk/ground3_x3
+  transparency: 0 width: 1450  x: -75  y: 485
+layer_end
+
+layer: 
+  _res_bg/cuhk/fire1_x3
+  transparency: 0  width: 1220  x: 385  y: 206 cc: 18 c1: 0 c2: 1
+layer_end
+layer: 
+  _res_bg/cuhk/fire2_x3
+  transparency: 0  width: 1220  x: 385  y: 206 cc: 18 c1: 2 c2: 3
+layer_end
+layer: 
+  _res_bg/cuhk/fire3_x3
+  transparency: 0  width: 1220  x: 385  y: 206 cc: 18 c1: 4 c2: 5
+layer_end
+layer: 
+  _res_bg/cuhk/fire4_x3
+  transparency: 0  width: 1220  x: 385  y: 206 cc: 18 c1: 6 c2: 7
+layer_end
+layer: 
+  _res_bg/cuhk/fire5_x3
+  transparency: 0  width: 1220  x: 385  y: 206 cc: 18 c1: 8 c2: 9
+layer_end
+layer: 
+  _res_bg/cuhk/fire6_x3
+  transparency: 0  width: 1220  x: 385  y: 206 cc: 18 c1: 10 c2: 11
+layer_end
+layer: 
+  _res_bg/cuhk/fire7_x3
+  transparency: 0  width: 1220  x: 385  y: 206 cc: 18 c1: 12 c2: 13
+layer_end
+layer: 
+  _res_bg/cuhk/fire8_x3
+  transparency: 0  width: 1220  x: 385  y: 206 cc: 18 c1: 14 c2: 15
+layer_end
+layer: 
+  _res_bg/cuhk/fire9_x3
+  transparency: 0  width: 1220  x: 385  y: 206 cc: 18 c1: 16 c2: 17
+layer_end

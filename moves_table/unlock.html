@@ -1,0 +1,334 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>LF2 - How to Unlock Characters and Stages</title>
+  <style>
+    body {
+      background-color: #051c55;
+      font-family: 'Roboto', 'Noto', sans-serif;
+      font-size: 16px;
+      overflow-x: hidden;
+      margin: 0;
+      color: white;
+    }
+
+    #toolbar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 10px;
+      box-sizing: border-box;
+    }
+
+    #lang-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      font-weight: bold;
+      font-size: 14px;
+      color: white;
+      padding: 2px 6px;
+      box-sizing: border-box;
+      border-radius: 4px;
+    }
+
+    .selected {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+
+    #close-btn {
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    #title {
+      position: fixed;
+      top: 25px;
+      height: 30px;
+      width: 100%;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 2px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    #content {
+      position: absolute;
+      top: 60px;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      border: 1px solid white;
+      padding: 10px 10px 10px 10px;
+      overflow-y: auto;
+      background: #051c55;
+      color: white;
+      white-space: pre-wrap;
+      line-height: 1.6;
+    }
+
+    b {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="title">
+    LF2 - How to Unlock Characters and Stages
+  </div>
+  <div id="toolbar">
+    <div id="lang-buttons">
+      <button id="btn-en" class="btn" onclick="showEnglish()">English</button>
+      <button id="btn-zh" class="btn" onclick="showChinese()">中文</button>
+    </div>
+    <div id="close-btn" onclick="window.close()">Esc ╳</div>
+  </div>
+
+  <div id="content"></div>
+
+  <script>
+    const englishRoadmap = `<b>How to Unlock Stages</b>
+
+• By default, only Stage 1 is available. Each time you clear a stage on a specific difficulty, the next stage for that difficulty will be unlocked.
+For example, clearing Stage 1 on Easy unlocks Stage 2 on Easy, which you can then play anytime. However, Stage 2 on Normal will remain locked until you clear Stage 1 on Normal.
+• Survival Stage for a given difficulty becomes available once you've cleared Stage 3 on that same difficulty.
+• In Network Play, stage unlocks follow the “all-must-meet” rule: every connected player must have cleared the previous stage for the next one to be available. For example, even if some players have cleared Stage 2, as long as one player hasn't, Stage 3 will remain locked in that online session.
+
+<hr>
+<b>How to Unlock Characters</b>
+
+The game begins with 10 playable characters. To unlock additional minion and boss characters, you’ll need to use <font color="#5dfff2">a secret code, which is revealed after clearing Stage 5 on Difficult</font>. (Note: This code is different from the one in the original Little Fighter 2.) <font color="#5dfff2">Enter the code in the Game Mode menu</font> (i.e. type the code when you see the menu screen showing VS Mode, Stage Mode, etc.) to unlock additional characters. However, those characters also require a minimum number of achievements in addition to the secret code.
+
+The number of achievements required (subject to change in future updates) varies per character:
+• <b>Bandit</b> unlocks at 2 achievements (plus the use of <font color="#5dfff2">the secret code</font>; same applies below)
+• <b>Hunter</b> unlocks at 3
+• <b>Mark</b> at 4
+• <b>Jack</b> at 6
+• <b>Sorcerer</b> at 9
+• <b>Monk</b> at 12
+• <b>Jan</b> at 15
+• <b>Knight</b> at 18
+• <b>Justin</b> at 22
+• <b>Bat</b> at 26
+• <b>LouisEX</b> at 30
+&nbsp;&nbsp;<i>(Even if not unlocked, Louis can still transform into LouisEX by pressing [D] [J] [A] when HP drops below 30%)</i>
+• <b>Firzen</b> at 40
+&nbsp;&nbsp;<i>(Even if not unlocked, Freeze and Firen (on the same team) can still fuse into Firzen by running toward each other when both their HP are below 30%)</i>
+• <b>Template</b> at 50
+• <b>Julian</b> is unlocked by default once the secret code is entered.
+
+You can check the list of achievements in your Steam client by going to:
+Library → Little Fighter 2 Remastered → Achievements: View My Achievements.<!-- Temporarily hide the picture to avoid potential issues during Steam's review process. It will be added back once approval is granted. <img src="how_to_view_en.png" width="512" height="512"> -->
+
+The number of achievements you've earned is also displayed at the bottom-left corner of the Game Mode menu in the game.
+I may consider making achievements easier to browse directly within the game in a future update. But for now, checking them via the Steam client remains the most convenient option.
+
+<hr>
+<b>Note on Achievements</b>
+
+• Some achievements require meeting specific goals using a human-controlled character. Please note that players who are not active enough, such as those who join but remain idle for most of the game, may not be counted in such cases.
+• More achievements may be added in the future.
+
+3 July 2025 • Marti Wong`;
+
+    const chineseRoadmap = `<b>如何解鎖關卡</b>
+
+• 遊戲初始時，僅可遊玩闖關模式的第 1 關。當你完成某難度的一個關卡後，將會解鎖該難度的下一關。
+例如，完成容易(Easy)的第 1 關後，未來可隨時進入容易的第 2 關。但若尚未完成普通(Normal)的第 1 關，則無法進入普通的第 2 關。
+• 當你在特定難度下通過第 3 關後，該難度的生存關卡(Survival Stage)將會解鎖。
+• 在網路對戰中，關卡的解鎖遵循「須全體皆達成條件」的規則：所有連線的玩家都必須完成前一關卡，下一關才能啟用。舉例來說，即使其他玩家已通過第 2 關，只要其中一人尚未通關，第 3 關在這場網路對戰中仍會保持鎖定。
+
+<hr>
+<b>如何解鎖角色</b>
+
+遊戲初始提供 10 位可操作角色。若要解鎖其他小兵與頭目角色，需利用「秘密碼」，該<font color="#5dfff2">「秘密碼」會在困難 (Difficult) 完成第 5 關後揭曉</font>。 （注意：此碼與原版《小朋友齊打交2》的不同。） <font color="#5dfff2">在「遊戲模式」選單中輸入</font>（也就是看到 VS、闖關等模式的選單時輸入）這組「秘密碼」，即可解鎖角色。然而，除了輸入「秘密碼」外，這些角色還需要達成一定數量的成就才能解鎖。
+
+每個角色所需的成就數量（未來版本中可能會有所調整）如下：
+• 達成 2 個成就 可解鎖 <b>Bandit</b>（還需要使用<font color="#5dfff2">「秘密碼」</font>，下同）
+• 達成 3 個成就 可解鎖 <b>Hunter</b>
+• 達成 4 個成就 可解鎖 <b>Mark</b>
+• 達成 6 個成就 可解鎖 <b>Jack</b>
+• 達成 9 個成就 可解鎖 <b>Sorcerer</b>
+• 達成 12 個成就 可解鎖 <b>Monk</b>
+• 達成 15 個成就 可解鎖 <b>Jan</b>
+• 達成 18 個成就 可解鎖 <b>Knight</b>
+• 達成 22 個成就 可解鎖 <b>Justin</b>
+• 達成 26 個成就 可解鎖 <b>Bat</b>
+• 達成 30 個成就 可解鎖 <b>LouisEX</b>
+&nbsp;&nbsp;<i>（即使未解鎖，Louis 仍可在 HP 低於 30% 時按下 [D] [J] [A] 變身為 LouisEX）</i>
+• 達成 40 個成就 可解鎖 <b>Firzen</b>
+&nbsp;&nbsp;<i>（即使未解鎖，只要 Freeze 和 Firen 為同一隊，且雙方血量皆低於 30%，仍可透過跑向對方進行融合變身為 Firzen）</i>
+• 達成 50 個成就 可解鎖 <b>Template</b>
+• <b>Julian</b> 則在輸入「秘密碼」後自動解鎖，無需達成任何成就
+
+你可以在 Steam 客戶端中查看成就列表：
+收藏庫 → Little Fighter 2 Remastered → 成就: 查看我的成就。<!-- Temporarily hide the picture to avoid potential issues during Steam's review process. It will be added back once approval is granted. <img src="how_to_view_zh.png" width="512" height="512"> -->
+
+你已獲得的成就數量，也會顯示在遊戲中的「遊戲模式」選單的左下角。
+未來我會考慮在遊戲內提供更方便的成就瀏覽方式。但就目前而言，透過 Steam 客戶端查看仍是最方便的方式。
+
+<hr>
+<b>關於成就</b>
+
+• 某些成就需由玩家實際操控的角色完成指定目標。請注意，若玩家參與遊戲但大多時間處於閒置狀態，可能不會被視為有效的操控角色。
+• 未來可能會新增更多成就。
+
+2025年7月3日
+Marti Wong`;
+
+    const englishButton = document.getElementById('btn-en');
+    const chineseButton = document.getElementById('btn-zh');
+    const contentDiv = document.getElementById('content');
+
+    function showEnglish() {
+      englishButton.focus();
+      document.getElementById('content').innerHTML = englishRoadmap;
+      document.getElementById('title').innerHTML = 'LF2 - How to Unlock Characters and Stages';
+      englishButton.classList.add('selected');
+      chineseButton.classList.remove('selected');
+      contentDiv.scrollTop = 0;
+    }
+
+    function showChinese() {
+      chineseButton.focus();
+      document.getElementById('content').innerHTML = chineseRoadmap;
+      document.getElementById('title').innerHTML = 'LF2 - 如何解鎖角色及關卡';
+      chineseButton.classList.add('selected');
+      englishButton.classList.remove('selected');
+      contentDiv.scrollTop = 0;
+    }
+
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        pressEsc();
+      } else if (event.key === 'ArrowUp') {
+        pressUp();
+      } else if (event.key === 'ArrowDown') {
+        pressDown();
+      } else if (event.key === 'ArrowLeft') {
+        pressLeft();
+      } else if (event.key === 'ArrowRight') {
+        pressRight();
+      }
+    });
+
+    function pressUp() {
+      contentDiv.scrollTop -= 200;
+    }
+    function pressDown() {
+      contentDiv.scrollTop += 200;
+    }
+    function pressLeft() {
+      showEnglish();
+    }
+    function pressRight() {
+      showChinese();
+    }
+    function pressEsc() {
+      window.close();
+    }
+
+    window.addEventListener("gamepadconnected", (evt) => {
+        addGamepad(evt.gamepad);
+    });
+    loopStarted = false;
+    function addGamepad(gamepad) {
+        if (!loopStarted) {
+            requestAnimationFrame(updateStatus);
+            loopStarted = true;
+        }
+    }
+
+    let escDown = false;
+    let upDown = false;
+    let downDown = false;
+    let leftDown = false;
+    let rightDown = false;
+    function updateStatus() {
+        let escDown0 = escDown;
+        let upDown0 = upDown;
+        let downDown0 = downDown;
+        let leftDown0 = leftDown;
+        let rightDown0 = rightDown;
+        escDown = false;
+        upDown = false;
+        downDown = false;
+        leftDown = false;
+        rightDown = false;
+
+        for (const gamepad of navigator.getGamepads()) {
+            if (!gamepad) continue;
+
+            for (const [i, button] of gamepad.buttons.entries()) {
+                if (button.pressed) {
+                    if (i==12) {
+                      if (!upDown0) pressUp();
+                      upDown = true;
+                    }
+                    if (i==13) {
+                      if (!downDown0) pressDown();
+                      downDown = true;
+                    }
+                    if (i==14) {
+                      if (!leftDown0) pressLeft();
+                      leftDown = true;
+                    }
+                    if (i==15) {
+                      if (!rightDown0) pressRight();
+                      rightDown = true;
+                    }
+                    if (i==9) {
+                      if (!escDown0) pressEsc();
+                      escDown = true;
+                    }
+                }
+            }
+
+            for (const [i, axis] of gamepad.axes.entries()) {
+                if (axis>.5) {
+                    if (i==1) {
+                      if (!downDown0) pressDown();
+                      downDown = true;
+                    }
+                    if (i==0) {
+                      if (!rightDown0) pressRight();
+                      rightDown = true;
+                    }
+                }
+
+                if (axis<-.5) {
+                    if (i==1) {
+                      if (!upDown0) pressUp();
+                      upDown = true;
+                    }
+                    if (i==0) {
+                      if (!leftDown0) pressLeft();
+                      leftDown = true;
+                    }
+                }
+            }
+        }
+        requestAnimationFrame(updateStatus);
+    }
+
+    // Show English by default
+    showEnglish();
+  </script>
+
+</body>
+</html>
