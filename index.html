@@ -697,61 +697,54 @@
       -webkit-user-select: none;
   }
   
+  html, body {
+      touch-action: none; overflow: hidden;
+      user-select: none; -webkit-user-select: none;
+  }
   #mobile-controls {
-      position: absolute;
-      top: 0; left: 0; width: 100vw; height: 100vh;
-      z-index: 9999;
-      pointer-events: none; /* 讓中間區域不影響遊戲本身的點擊 */
+      position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+      z-index: 9999; pointer-events: none;
+  }
+  .sys-pad {
+      position: absolute; top: 15px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 20px; pointer-events: auto;
+  }
+  .v-btn {
+      background: rgba(255, 255, 255, 0.25); border: 2px solid rgba(255, 255, 255, 0.6);
+      color: white; font-weight: bold; border-radius: 8px;
+      backdrop-filter: blur(2px); outline: none; -webkit-tap-highlight-color: transparent;
   }
   
-  /* 解除按鈕區域的點擊穿透 */
-  .d-pad, .action-pad, .sys-pad { pointer-events: auto; }
-
-  /* 基礎按鈕外觀 */
-  .v-btn {
-      background: rgba(255, 255, 255, 0.25);
-      border: 2px solid rgba(255, 255, 255, 0.6);
-      color: white; 
-      font-weight: bold; 
-      display: flex; justify-content: center; align-items: center;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-      backdrop-filter: blur(2px); /* 讓按鈕有一點毛玻璃質感 */
-      outline: none;
-      -webkit-tap-highlight-color: transparent;
+  /* 搖桿基礎樣式 */
+  .joy-base {
+      position: absolute; bottom: 30px; width: 140px; height: 140px;
+      background: rgba(255, 255, 255, 0.1); border: 2px dashed rgba(255, 255, 255, 0.3);
+      border-radius: 50%; pointer-events: auto; touch-action: none;
+  }
+  .joy-knob {
+      position: absolute; top: 50%; left: 50%; width: 60px; height: 60px;
+      margin-top: -30px; margin-left: -30px; border-radius: 50%;
+      background: rgba(255, 255, 255, 0.6); box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      transition: transform 0.05s ease-out; display: flex; justify-content: center; align-items: center;
+      font-weight: bold; font-size: 24px; color: #333;
+  }
+  
+  /* 左側移動搖桿的衝刺外圈線 */
+  #joy-move { left: 40px; }
+  .joy-dash-ring {
+      position: absolute; top: 15%; left: 15%; width: 70%; height: 70%;
+      border: 1px solid rgba(255, 100, 100, 0.5); border-radius: 50%;
   }
 
-  /* 系統按鍵 (置中對齊) */
-  .sys-pad {
-      position: absolute; top: 15px; left: 50%;
-      transform: translateX(-50%);
-      display: flex; gap: 20px;
-  }
-  .sys-btn {
-      width: 70px; height: 35px;
-      border-radius: 8px; font-size: 14px;
-  }
-
-  /* 方向鍵排版 (左下) */
-  .d-pad { 
-      position: absolute; left: 20px; bottom: 20px;
-      display: grid; grid-template-columns: 60px 60px 60px; gap: 5px; 
-  }
-  .d-pad .v-btn { width: 60px; height: 60px; border-radius: 50%; font-size: 24px; }
-  #btn-up { grid-column: 2; grid-row: 1; }
-  #btn-left { grid-column: 1; grid-row: 2; }
-  #btn-right { grid-column: 3; grid-row: 2; }
-  #btn-down { grid-column: 2; grid-row: 3; }
-
-  /* 動作鍵排版 (右下菱形排列) */
-  .action-pad { 
-      position: absolute; right: 20px; bottom: 20px;
-      display: grid; grid-template-columns: 60px 60px 60px; gap: 5px; 
-  }
-  .action-pad .v-btn { width: 60px; height: 60px; border-radius: 50%; font-size: 18px; }
-  #btn-jmp { grid-column: 2; grid-row: 1; } /* 上 */
-  #btn-def { grid-column: 1; grid-row: 2; } /* 左 */
-  #btn-atk { grid-column: 3; grid-row: 2; } /* 右 */
-  #btn-ex  { grid-column: 2; grid-row: 3; } /* 下 (額外技能鍵) */
+  /* 右側動作區 */
+  .action-area { position: absolute; right: 40px; bottom: 30px; display: flex; align-items: center; gap: 20px; }
+  #joy-d { position: relative; bottom: 0; background: rgba(0, 150, 255, 0.1); border-color: rgba(0, 150, 255, 0.5); }
+  #joy-d-knob { background: rgba(0, 150, 255, 0.6); color: white; }
+  .d-label { position: absolute; font-size: 11px; color: rgba(255,255,255,0.8); pointer-events: none; }
+  
+  /* A, J 連發鍵 */
+  .auto-btn-group { display: flex; flex-direction: column; gap: 15px; pointer-events: auto; }
+  .auto-btn { width: 60px; height: 60px; border-radius: 50%; font-size: 20px; }
         </style>
         <link rel="icon" href="data:,">
 </head>
@@ -1202,30 +1195,40 @@
             <div id="debug-text"></div>
         </div>
 <div id="mobile-controls" style="display: none;">
-    
-    <!-- 頂部系統鍵 (開始/暫停/返回) -->
+    <!-- 系統按鍵 -->
     <div class="sys-pad">
-        <button class="v-btn sys-btn" data-key="Escape">暫停</button>
-        <button class="v-btn sys-btn" data-key="Enter">確認</button>
+        <button class="v-btn sys-btn" onclick="simulateKey('Escape', true); setTimeout(()=>simulateKey('Escape', false), 50)">暫停</button>
+        <button class="v-btn sys-btn" onclick="simulateKey('Enter', true); setTimeout(()=>simulateKey('Enter', false), 50)">確認</button>
     </div>
 
-    <!-- 左側方向鍵 -->
-    <div class="d-pad">
-        <button class="v-btn" id="btn-up" data-key="ArrowUp">↑</button>
-        <button class="v-btn" id="btn-left" data-key="ArrowLeft">←</button>
-        <button class="v-btn" id="btn-right" data-key="ArrowRight">→</button>
-        <button class="v-btn" id="btn-down" data-key="ArrowDown">↓</button>
+    <!-- 左側：方向移動搖桿 -->
+    <div id="joy-move" class="joy-base">
+        <!-- 視覺外圈輔助線 -->
+        <div class="joy-dash-ring"></div>
+        <div id="joy-move-knob" class="joy-knob"></div>
     </div>
 
-    <!-- 右側動作鍵 (採用弧形排版，符合大拇指人體工學) -->
-    <div class="action-pad">
-        <button class="v-btn" id="btn-def" data-key="KeyD">防</button>
-        <button class="v-btn" id="btn-jmp" data-key="KeyJ">跳</button>
-        <button class="v-btn" id="btn-atk" data-key="KeyA">攻</button>
-        <!-- 您可以隨時複製下方這行來增加按鍵，只需更改 data-key -->
-        <button class="v-btn" id="btn-ex" data-key="ShiftLeft">特</button>
+    <!-- 右側：動作區 -->
+    <div class="action-area">
+        <!-- D 智能巨集搖桿 -->
+        <div id="joy-d" class="joy-base d-base">
+            <!-- 區域標籤 -->
+            <div class="d-label" style="top:5%; left:50%; transform:translate(-50%,0)">ADA</div>
+            <div class="d-label" style="top:25%; right:5%">Dir+J</div>
+            <div class="d-label" style="bottom:25%; right:5%">Dir+A</div>
+            <div class="d-label" style="bottom:5%; left:50%; transform:translate(-50%,0)">DDD</div>
+            <div class="d-label" style="bottom:25%; left:5%">JA</div>
+            <div class="d-label" style="top:25%; left:5%">JDJ</div>
+            
+            <div id="joy-d-knob" class="joy-knob d-knob">D</div>
+        </div>
+        
+        <!-- A 與 J 獨立連發按鍵 -->
+        <div class="auto-btn-group">
+            <button id="btn-j" class="v-btn auto-btn">J</button>
+            <button id="btn-a" class="v-btn auto-btn">A</button>
+        </div>
     </div>
-
 </div>
         <script>
             function INDEX_AddAppToBody(e) {
@@ -1248,35 +1251,214 @@
     <script src="js/particle-emitter.min.js"></script>
     
     <script src="js/game.js"></script>
-    <script>
-        // 偵測是否為行動裝置，若是則顯示按鍵
-        if (/Android|webOS|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-            document.getElementById('mobile-controls').style.display = 'flex';
+<script>
+if (/Android|webOS|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+    document.getElementById('mobile-controls').style.display = 'block';
+}
+
+const simulateKey = (key, isDown) => {
+    window.dispatchEvent(new KeyboardEvent(isDown ? 'keydown' : 'keyup', { code: key, key: key }));
+};
+// 巨集延遲工具
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+// 巨集敲擊工具 (按下去再放開)
+const tapKey = async (key, delay = 40) => {
+    simulateKey(key, true); await sleep(delay); simulateKey(key, false); await sleep(delay);
+};
+
+// 全局追蹤當前方向 (給 Dir+A / Dir+J 使用)
+let currentDirKeys = [];
+
+// ==========================================
+// 1. 左側：方向移動搖桿 (具備內外圈衝刺判斷)
+// ==========================================
+const joyMove = document.getElementById('joy-move');
+const joyMoveKnob = document.getElementById('joy-move-knob');
+const joyMoveRadius = 70; // 搖桿底座半徑
+const dashThreshold = 0.8; // 超過 80% 視為外圈 (觸發衝刺)
+
+let moveState = { active: false, x: 0, y: 0, dashingX: false };
+let activeDirs = { up: false, down: false, left: false, right: false };
+
+function updateMoveDirs(x, y) {
+    const thresh = 0.3; // 內圈觸發死區
+    const newDirs = {
+        up: y < -thresh, down: y > thresh,
+        left: x < -thresh, right: x > thresh
+    };
+    
+    // 判斷衝刺 (Dash) - 當 X 軸滑動超過外圈，且先前未在衝刺狀態時
+    if (Math.abs(x) > dashThreshold && !moveState.dashingX) {
+        moveState.dashingX = true;
+        let dashKey = x > 0 ? 'ArrowRight' : 'ArrowLeft';
+        // 核心技巧：因為進入內圈時已經按下了方向鍵，這裡只需「快速放開再按下」就能湊成兩次點擊觸發 LF2 跑動！
+        simulateKey(dashKey, false); 
+        setTimeout(() => simulateKey(dashKey, true), 30);
+    } else if (Math.abs(x) < dashThreshold) {
+        moveState.dashingX = false; // 回到內圈，解除衝刺鎖定
+    }
+
+    // 發送鍵盤事件 (狀態改變才發送)
+    const map = [
+        { key: 'ArrowUp', st: 'up' }, { key: 'ArrowDown', st: 'down' },
+        { key: 'ArrowLeft', st: 'left' }, { key: 'ArrowRight', st: 'right' }
+    ];
+    
+    currentDirKeys = []; // 更新全局方向
+    map.forEach(d => {
+        if (newDirs[d.st] !== activeDirs[d.st]) {
+            simulateKey(d.key, newDirs[d.st]);
+            activeDirs[d.st] = newDirs[d.st];
         }
+        if (newDirs[d.st]) currentDirKeys.push(d.key);
+    });
+}
 
-        const buttons = document.querySelectorAll('#mobile-controls button');
+function handleJoyMove(e) {
+    e.preventDefault();
+    if (e.type === 'touchend' || e.type === 'touchcancel') {
+        joyMoveKnob.style.transform = `translate(0px, 0px)`;
+        updateMoveDirs(0, 0); moveState.dashingX = false; return;
+    }
+    
+    const rect = joyMove.getBoundingClientRect();
+    const touch = Array.from(e.touches).find(t => t.target === joyMove || t.target === joyMoveKnob);
+    if (!touch) return;
 
-        // 觸發虛擬按鍵
-        const triggerKey = (keyString, isKeyDown) => {
-            const eventType = isKeyDown ? 'keydown' : 'keyup';
-            const event = new KeyboardEvent(eventType, { code: keyString, key: keyString });
-            window.dispatchEvent(event); // 派發給 window，讓遊戲引擎接收
-        };
+    let dx = touch.clientX - (rect.left + rect.width / 2);
+    let dy = touch.clientY - (rect.top + rect.height / 2);
+    let distance = Math.min(Math.sqrt(dx*dx + dy*dy), joyMoveRadius);
+    let angle = Math.atan2(dy, dx);
 
-        // 綁定觸控事件 (防止預設的放大/滾動行為)
-        buttons.forEach(btn => {
-            btn.addEventListener('touchstart', (e) => {
-                e.preventDefault(); 
-                triggerKey(btn.getAttribute('data-key'), true);
-                btn.style.opacity = '0.5'; // 視覺回饋
-            }, { passive: false });
+    let finalX = distance * Math.cos(angle);
+    let finalY = distance * Math.sin(angle);
+    joyMoveKnob.style.transform = `translate(${finalX}px, ${finalY}px)`;
+    
+    // 輸出正規化數值 (-1.0 ~ 1.0)
+    updateMoveDirs(finalX / joyMoveRadius, finalY / joyMoveRadius);
+}
+joyMove.addEventListener('touchstart', handleJoyMove, { passive: false });
+joyMove.addEventListener('touchmove', handleJoyMove, { passive: false });
+joyMove.addEventListener('touchend', handleJoyMove, { passive: false });
+joyMove.addEventListener('touchcancel', handleJoyMove, { passive: false });
 
-            btn.addEventListener('touchend', (e) => {
-                e.preventDefault();
-                triggerKey(btn.getAttribute('data-key'), false);
-                btn.style.opacity = '1';
-            }, { passive: false });
-        });
-    </script>
+
+// ==========================================
+// 2. 右側：A 與 J 獨立連發按鍵 (按住自動連打)
+// ==========================================
+const setupTurboBtn = (id, key) => {
+    const btn = document.getElementById(id);
+    let turboInterval = null;
+    
+    const startTurbo = (e) => {
+        e.preventDefault(); btn.style.background = 'rgba(255,255,255,0.8)';
+        if (!turboInterval) {
+            // 立即按第一下，然後每 80 毫秒連打一次
+            tapKey(key, 30);
+            turboInterval = setInterval(() => tapKey(key, 30), 80);
+        }
+    };
+    const stopTurbo = (e) => {
+        e.preventDefault(); btn.style.background = '';
+        clearInterval(turboInterval); turboInterval = null;
+    };
+    btn.addEventListener('touchstart', startTurbo, { passive: false });
+    btn.addEventListener('touchend', stopTurbo, { passive: false });
+    btn.addEventListener('touchcancel', stopTurbo, { passive: false });
+};
+setupTurboBtn('btn-a', 'KeyA');
+setupTurboBtn('btn-j', 'KeyJ');
+
+
+// ==========================================
+// 3. 右側：D 智能巨集搖桿
+// ==========================================
+const joyD = document.getElementById('joy-d');
+const joyDKnob = document.getElementById('joy-d-knob');
+const joyDRadius = 70;
+let dState = { active: false, macroFired: false };
+
+async function fireMacro(zoneIndex) {
+    if (dState.macroFired) return; // 每次滑動只觸發一次巨集
+    dState.macroFired = true;
+    joyDKnob.style.background = 'red'; // 視覺回饋：巨集觸發
+
+    switch (zoneIndex) {
+        case 0: // Right: Dir+A
+            currentDirKeys.forEach(k => simulateKey(k, true)); // 補方向
+            await tapKey('KeyA');
+            break;
+        case 1: // Bottom Right: Dir+J (Custom adjusted position)
+        case 2: // Bottom: DDD
+            await tapKey('KeyD', 40); await tapKey('KeyD', 40); await tapKey('KeyD', 40);
+            break;
+        case 3: // Bottom Left: JA (同時按)
+            simulateKey('KeyJ', true); simulateKey('KeyA', true);
+            await sleep(50);
+            simulateKey('KeyJ', false); simulateKey('KeyA', false);
+            break;
+        case 4: // Left: JDJ
+            await tapKey('KeyJ', 40); await tapKey('KeyD', 40); await tapKey('KeyJ', 40);
+            break;
+        case 5: // Top: ADA
+            await tapKey('KeyA', 40); await tapKey('KeyD', 40); await tapKey('KeyA', 40);
+            break;
+        case 6: // Top Right: Dir+J
+            currentDirKeys.forEach(k => simulateKey(k, true));
+            await tapKey('KeyJ');
+            break;
+    }
+}
+
+function handleJoyD(e) {
+    e.preventDefault();
+    const touch = Array.from(e.touches).find(t => t.target === joyD || t.target === joyDKnob);
+
+    if (e.type === 'touchend' || e.type === 'touchcancel' || !touch) {
+        joyDKnob.style.transform = `translate(0px, 0px)`;
+        joyDKnob.style.background = '';
+        simulateKey('KeyD', false); // 放開 D 鍵
+        dState.active = false; dState.macroFired = false;
+        return;
+    }
+
+    const rect = joyD.getBoundingClientRect();
+    let dx = touch.clientX - (rect.left + rect.width / 2);
+    let dy = touch.clientY - (rect.top + rect.height / 2);
+    let distance = Math.min(Math.sqrt(dx*dx + dy*dy), joyDRadius);
+    
+    joyDKnob.style.transform = `translate(${distance * Math.cos(Math.atan2(dy, dx))}px, ${distance * Math.sin(Math.atan2(dy, dx))}px)`;
+
+    // 處理內圈邏輯 (僅按住 D)
+    if (distance < joyDRadius * 0.6) {
+        if (!dState.active) {
+            simulateKey('KeyD', true); dState.active = true;
+        }
+        dState.macroFired = false; // 回到內圈重置巨集鎖定
+        joyDKnob.style.background = '';
+    } 
+    // 處理外圈邏輯 (觸發對應巨集)
+    else {
+        // 將角度 (-180~180) 轉為 360 度，並切分為 6 個區塊 (每區 60 度)
+        let angleDeg = Math.atan2(dy, dx) * (180 / Math.PI);
+        if (angleDeg < 0) angleDeg += 360; 
+        
+        // 分割區：0:右, 1:右下, 2:左下, 3:左, 4:左上, 5:右上
+        // 為了配合您指定的方位，我們進行特定角度判定
+        if (!dState.macroFired) {
+            if (angleDeg > 330 || angleDeg <= 30) fireMacro(0); // Dir+A
+            else if (angleDeg > 30 && angleDeg <= 90) fireMacro(2); // DDD (正下方)
+            else if (angleDeg > 90 && angleDeg <= 150) fireMacro(3); // JA (左下)
+            else if (angleDeg > 150 && angleDeg <= 210) fireMacro(4); // JDJ (正左)
+            else if (angleDeg > 210 && angleDeg <= 270) fireMacro(5); // ADA (正上)
+            else if (angleDeg > 270 && angleDeg <= 330) fireMacro(6); // Dir+J (右上)
+        }
+    }
+}
+joyD.addEventListener('touchstart', handleJoyD, { passive: false });
+joyD.addEventListener('touchmove', handleJoyD, { passive: false });
+joyD.addEventListener('touchend', handleJoyD, { passive: false });
+joyD.addEventListener('touchcancel', handleJoyD, { passive: false });
+</script>
 </body>
 </html>
