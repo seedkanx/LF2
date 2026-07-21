@@ -690,7 +690,68 @@
                 resize: none;
                 font-family: Arial,Helvetica,sans-serif
             }
-            
+            html, body {
+      touch-action: none;
+      overflow: hidden;
+      user-select: none;
+      -webkit-user-select: none;
+  }
+  
+  #mobile-controls {
+      position: absolute;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      z-index: 9999;
+      pointer-events: none; /* 讓中間區域不影響遊戲本身的點擊 */
+  }
+  
+  /* 解除按鈕區域的點擊穿透 */
+  .d-pad, .action-pad, .sys-pad { pointer-events: auto; }
+
+  /* 基礎按鈕外觀 */
+  .v-btn {
+      background: rgba(255, 255, 255, 0.25);
+      border: 2px solid rgba(255, 255, 255, 0.6);
+      color: white; 
+      font-weight: bold; 
+      display: flex; justify-content: center; align-items: center;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      backdrop-filter: blur(2px); /* 讓按鈕有一點毛玻璃質感 */
+      outline: none;
+      -webkit-tap-highlight-color: transparent;
+  }
+
+  /* 系統按鍵 (置中對齊) */
+  .sys-pad {
+      position: absolute; top: 15px; left: 50%;
+      transform: translateX(-50%);
+      display: flex; gap: 20px;
+  }
+  .sys-btn {
+      width: 70px; height: 35px;
+      border-radius: 8px; font-size: 14px;
+  }
+
+  /* 方向鍵排版 (左下) */
+  .d-pad { 
+      position: absolute; left: 20px; bottom: 20px;
+      display: grid; grid-template-columns: 60px 60px 60px; gap: 5px; 
+  }
+  .d-pad .v-btn { width: 60px; height: 60px; border-radius: 50%; font-size: 24px; }
+  #btn-up { grid-column: 2; grid-row: 1; }
+  #btn-left { grid-column: 1; grid-row: 2; }
+  #btn-right { grid-column: 3; grid-row: 2; }
+  #btn-down { grid-column: 2; grid-row: 3; }
+
+  /* 動作鍵排版 (右下菱形排列) */
+  .action-pad { 
+      position: absolute; right: 20px; bottom: 20px;
+      display: grid; grid-template-columns: 60px 60px 60px; gap: 5px; 
+  }
+  .action-pad .v-btn { width: 60px; height: 60px; border-radius: 50%; font-size: 18px; }
+  #btn-jmp { grid-column: 2; grid-row: 1; } /* 上 */
+  #btn-def { grid-column: 1; grid-row: 2; } /* 左 */
+  #btn-atk { grid-column: 3; grid-row: 2; } /* 右 */
+  #btn-ex  { grid-column: 2; grid-row: 3; } /* 下 (額外技能鍵) */
         </style>
         <link rel="icon" href="data:,">
 </head>
@@ -1140,6 +1201,32 @@
         <div id="game-screen-overlay-wrapper">
             <div id="debug-text"></div>
         </div>
+<div id="mobile-controls" style="display: none;">
+    
+    <!-- 頂部系統鍵 (開始/暫停/返回) -->
+    <div class="sys-pad">
+        <button class="v-btn sys-btn" data-key="Escape">暫停</button>
+        <button class="v-btn sys-btn" data-key="Enter">確認</button>
+    </div>
+
+    <!-- 左側方向鍵 -->
+    <div class="d-pad">
+        <button class="v-btn" id="btn-up" data-key="ArrowUp">↑</button>
+        <button class="v-btn" id="btn-left" data-key="ArrowLeft">←</button>
+        <button class="v-btn" id="btn-right" data-key="ArrowRight">→</button>
+        <button class="v-btn" id="btn-down" data-key="ArrowDown">↓</button>
+    </div>
+
+    <!-- 右側動作鍵 (採用弧形排版，符合大拇指人體工學) -->
+    <div class="action-pad">
+        <button class="v-btn" id="btn-def" data-key="KeyD">防</button>
+        <button class="v-btn" id="btn-jmp" data-key="KeyJ">跳</button>
+        <button class="v-btn" id="btn-atk" data-key="KeyA">攻</button>
+        <!-- 您可以隨時複製下方這行來增加按鍵，只需更改 data-key -->
+        <button class="v-btn" id="btn-ex" data-key="ShiftLeft">特</button>
+    </div>
+
+</div>
         <script>
             function INDEX_AddAppToBody(e) {
                 e.renderer.view.style.position = "absolute",
