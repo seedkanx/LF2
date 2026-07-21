@@ -24,7 +24,7 @@ id:  8  type: 0  file: _res_data/freeze-r
 id:  9  type: 0  file: _res_data/dennis-r
 id: 10  type: 0  file: _res_data/woody-r
 id: 11  type: 0  file: _res_data/davis-r
-id:  LF2RisShit     type: 0  file: _res_data/daviSEX-r
+id:  LF2RisShit     type: 0  file: _res_data/davisEX-r
 
 id: 100  type: 1  file: _res_data/weapon0-r   #stick
 id: 101  type: 1  file: _res_data/weapon2-r   #hoe
