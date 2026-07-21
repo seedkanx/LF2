@@ -1161,5 +1161,35 @@
     <script src="js/particle-emitter.min.js"></script>
     
     <script src="js/game.js"></script>
+    <script>
+        // 偵測是否為行動裝置，若是則顯示按鍵
+        if (/Android|webOS|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+            document.getElementById('mobile-controls').style.display = 'flex';
+        }
+
+        const buttons = document.querySelectorAll('#mobile-controls button');
+
+        // 觸發虛擬按鍵
+        const triggerKey = (keyString, isKeyDown) => {
+            const eventType = isKeyDown ? 'keydown' : 'keyup';
+            const event = new KeyboardEvent(eventType, { code: keyString, key: keyString });
+            window.dispatchEvent(event); // 派發給 window，讓遊戲引擎接收
+        };
+
+        // 綁定觸控事件 (防止預設的放大/滾動行為)
+        buttons.forEach(btn => {
+            btn.addEventListener('touchstart', (e) => {
+                e.preventDefault(); 
+                triggerKey(btn.getAttribute('data-key'), true);
+                btn.style.opacity = '0.5'; // 視覺回饋
+            }, { passive: false });
+
+            btn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                triggerKey(btn.getAttribute('data-key'), false);
+                btn.style.opacity = '1';
+            }, { passive: false });
+        });
+    </script>
 </body>
 </html>
