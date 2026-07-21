@@ -700,7 +700,7 @@ html, body {
         z-index: 9999; pointer-events: none;
     }
 
-    /* === 搖桿樣式 === */
+    /* === 搖桿區 === */
     #joystick-zone {
         position: absolute; left: 40px; bottom: 40px;
         width: 220px; height: 220px; pointer-events: auto;
@@ -716,82 +716,82 @@ html, body {
     }
     #dpad-cross .cross-v { width: 50px; height: 180px; border-radius: 10px; }
     #dpad-cross .cross-h { width: 180px; height: 50px; border-radius: 10px; }
-    
     #joystick-inner-ring {
         position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
         width: 100px; height: 100px; border: 2px dashed rgba(255, 255, 255, 0.25); border-radius: 50%;
     }
     #joystick-stick {
-        position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        position: absolute; top: 50%; left: 50%;
         width: 85px; height: 85px; background: rgba(255, 255, 255, 0.65);
-        border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.6); transition: transform 0.04s linear;
+        border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+        transform: translate(-50%, -50%); transition: transform 0.04s linear;
     }
 
-    /* === 動作按鍵區 (動態佈局核心) === */
+    /* === 動態形變動作按鍵區 === */
     #action-zone {
         position: absolute; right: 40px; bottom: 40px;
         width: 220px; height: 220px;
         display: grid; 
-        /* 預設比例 1:1 */
+        /* 預設 1:1 平均分配 */
         grid-template-columns: 1fr 1fr; 
         grid-template-rows: 1fr 1fr; 
         gap: 12px; pointer-events: auto;
-        transition: grid-template-columns 0.15s ease-out;
+        transition: grid-template-columns 0.15s ease-out, grid-template-rows 0.15s ease-out;
     }
     
-    /* 當 D 被按下時的動態變化 */
-    #action-zone.d-pressed {
-        /* 左側(J/A)佔 70%，右側(D)縮小至 30% 讓出位置 */
-        grid-template-columns: 1.4fr 0.6fr; 
-    }
-    #action-zone.d-pressed #btn-d {
-        transform: scale(0.85); /* D 物理縮小 */
-        background: rgba(255, 255, 255, 0.4);
-    }
-    #action-zone.d-pressed #btn-j {
-        background: rgba(40, 120, 255, 0.9); /* J 變藍色 */
-        color: white; transform: scale(1.05); z-index: 10;
-    }
-    #action-zone.d-pressed #btn-a {
-        background: rgba(255, 50, 50, 0.9); /* A 變紅色 */
-        color: white; transform: scale(1.05); z-index: 10;
-    }
-
     .act-btn {
-        background: rgba(255, 255, 255, 0.25); border: 2px solid rgba(255, 255, 255, 0.6);
-        border-radius: 14px; color: white; font-size: 24px; font-weight: bold;
+        background: rgba(255, 255, 255, 0.25); /* 預設半透明白 */
+        border: 2px solid rgba(255, 255, 255, 0.6);
+        border-radius: 14px; color: white;
+        font-size: 22px; font-weight: bold;
         display: flex; justify-content: center; align-items: center;
-        backdrop-filter: blur(4px); transition: all 0.15s ease;
+        backdrop-filter: blur(4px);
+        transition: background 0.15s ease;
     }
-    .act-btn.active { background: rgba(255, 255, 255, 0.85) !important; color: black !important; }
 
+    /* 基礎佈局 */
     #btn-j { grid-column: 1; grid-row: 1; }
     #btn-a { grid-column: 1; grid-row: 2; }
-    #btn-d { grid-column: 2; grid-row: 1 / span 2; }
+    #btn-d { grid-column: 2; grid-row: 1 / span 2; } /* D 原本就佔據右側兩格高度 */
 
-    /* === 隱藏式功能面板 === */
+    /* [狀態 1] 點 D 時：D 變小 (0.4份)，J/A 變寬 (1.6份)，J變藍，A變紅 */
+    #action-zone.d-pressed {
+        grid-template-columns: 1.6fr 0.4fr;
+    }
+    #action-zone.d-pressed #btn-j { background: rgba(50, 150, 255, 0.5); }
+    #action-zone.d-pressed #btn-a { background: rgba(255, 50, 50, 0.5); }
+    #action-zone.d-pressed #btn-d { background: rgba(255, 255, 255, 0.5); }
+
+    /* [狀態 2] 點 J 時：J 與 D 變小，A 變大，A變紅 */
+    /* 備註：若 D 與 J 同時按，透過 J 的 Class 覆寫覆蓋 */
+    #action-zone.j-pressed {
+        grid-template-columns: 1.6fr 0.4fr; /* D 變小 */
+        grid-template-rows: 0.4fr 1.6fr;    /* J 變小，A 變大 */
+    }
+    #action-zone.j-pressed #btn-j { background: rgba(255, 255, 255, 0.5); }
+    #action-zone.j-pressed #btn-a { background: rgba(255, 50, 50, 0.6); font-size: 28px; } /* A 放得特別大 */
+
+    /* === 一體化面板 (三擊呼出) === */
     .hidden-panel {
-        display: none; position: absolute; top: 15px; left: 50%; transform: translateX(-50%);
-        background: rgba(15, 15, 20, 0.95); padding: 15px; border-radius: 16px; 
-        border: 2px solid rgba(255, 255, 255, 0.2); box-shadow: 0 8px 32px rgba(0,0,0,0.8);
-        pointer-events: auto; flex-direction: column; gap: 10px; z-index: 10000;
+        display: none; position: absolute; top: 15px; left: 50%;
+        transform: translateX(-50%); background: rgba(15, 15, 20, 0.92);
+        padding: 15px; border-radius: 16px; border: 2px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 8px 32px rgba(0,0,0,0.8);
+        pointer-events: auto; flex-direction: column; gap: 8px; z-index: 10000;
     }
-    .panel-header { display: flex; justify-content: space-between; color: #ccc; font-size: 14px; align-items: center;}
-    .close-btn { background: #aa2222; color: #fff; border: none; border-radius: 50%; width: 26px; height: 26px; }
 
-    /* F1~F9 與 ➕ */
-    .fkey-grid { display: flex; gap: 8px; justify-content: center; }
-    .v-fkey { background: #333; color: #fff; border: 1px solid #666; padding: 12px 14px; border-radius: 8px; font-size: 16px; font-weight: bold; }
-    .v-expand { background: #28a745; color: #fff; border: 1px solid #218838; padding: 12px 14px; border-radius: 8px; font-size: 16px; }
-
-    /* 完整鍵盤 */
-    .kb-row { display: flex; justify-content: center; gap: 5px; }
+    .fkey-row { display: flex; justify-content: center; gap: 6px; margin-bottom: 5px;}
     .v-char {
-        background: #2a2a35; color: #fff; border: 1px solid #444;
-        padding: 10px 14px; min-width: 40px; border-radius: 6px; font-size: 16px;
-        display: flex; justify-content: center; align-items: center;
+        background: #333; color: #fff; border: 1px solid #555;
+        padding: 12px 14px; border-radius: 8px; font-size: 16px; font-weight: bold;
+        display: flex; justify-content: center; align-items: center; min-width: 38px;
     }
-    .v-char.wide { min-width: 75px; background: #3a3a4a; }
+    .special-btn { background: #287; border-color: #3a8; }
+    
+    .kb-header { display: flex; justify-content: space-between; color: #aaa; font-size: 14px; margin-bottom: 5px; }
+    .kb-row { display: flex; justify-content: center; gap: 4px; margin-top: 4px; }
+    .v-char.wide { min-width: 70px; background: #3a3a4a; }
+    .close-btn { background: #aa2222; color: #fff; border: none; border-radius: 50%; width: 24px; height: 24px; }
         </style>
         <link rel="icon" href="data:,">
 </head>
@@ -1242,29 +1242,29 @@ html, body {
             <div id="debug-text"></div>
         </div>
 <div id="mobile-ui">
-    <!-- 隱藏式複合面板 (F1~F9 與 完整鍵盤) -->
-    <div id="panel-main" class="hidden-panel">
-        <div class="panel-header">
-            <span>系統控制 / 輸入法</span>
-            <button class="close-btn" onclick="hidePanel()">✕</button>
+    <!-- 一體化功能面板 (連點三次呼出，含 F1~F9 與折疊鍵盤) -->
+    <div id="panel-combined" class="hidden-panel">
+        <div class="kb-header">
+            <span>系統功能與輸入法</span>
+            <button class="close-btn" onclick="hideCombinedPanel()">✕</button>
         </div>
         
-        <!-- F1~F9 視圖 -->
-        <div id="view-fkeys" class="fkey-grid">
-            <button class="v-fkey" data-code="Digit1" data-kc="49">F1</button>
-            <button class="v-fkey" data-code="Digit2" data-kc="50">F2</button>
-            <button class="v-fkey" data-code="Digit3" data-kc="51">F3</button>
-            <button class="v-fkey" data-code="Digit4" data-kc="52">F4</button>
-            <button class="v-fkey" data-code="Digit5" data-kc="53">F5</button>
-            <button class="v-fkey" data-code="Digit6" data-kc="54">F6</button>
-            <button class="v-fkey" data-code="Digit7" data-kc="55">F7</button>
-            <button class="v-fkey" data-code="Digit8" data-kc="56">F8</button>
-            <button class="v-fkey" data-code="Digit9" data-kc="57">F9</button>
-            <button class="v-expand" onclick="expandToKeyboard()">➕</button>
+        <!-- F1~F9 常駐列 -->
+        <div class="fkey-row">
+            <button class="v-char" data-code="F1">F1</button>
+            <button class="v-char" data-code="F2">F2</button>
+            <button class="v-char" data-code="F3">F3</button>
+            <button class="v-char" data-code="F4">F4</button>
+            <button class="v-char" data-code="F5">F5</button>
+            <button class="v-char" data-code="F6">F6</button>
+            <button class="v-char" data-code="F7">F7</button>
+            <button class="v-char" data-code="F8">F8</button>
+            <button class="v-char" data-code="F9">F9</button>
+            <button id="kb-toggle-btn" class="v-char special-btn">+</button>
         </div>
 
-        <!-- 完整鍵盤視圖 (預設隱藏) -->
-        <div id="view-keyboard" style="display: none; flex-direction: column; gap: 6px;">
+        <!-- 隱藏的完整虛擬鍵盤區 -->
+        <div id="kb-full" style="display: none;">
             <div class="kb-row" id="kb-digits"></div>
             <div class="kb-row" id="kb-letters-1"></div>
             <div class="kb-row" id="kb-letters-2"></div>
@@ -1284,11 +1284,11 @@ html, body {
         </div>
     </div>
 
-    <!-- 動作按鍵區 (右下矩形：動態佈局) -->
+    <!-- 動作按鍵區 (右下矩形：動態形變) -->
     <div id="action-zone">
-        <div class="act-btn" id="btn-j" data-key="KeyJ" data-kc="74">跳 (J)</div>
-        <div class="act-btn" id="btn-d" data-key="KeyD" data-kc="68">防 (D)</div>
-        <div class="act-btn" id="btn-a" data-key="KeyA" data-kc="65">攻 (A)</div>
+        <div class="act-btn" id="btn-j" data-key="KeyJ">跳 (J)</div>
+        <div class="act-btn" id="btn-d" data-key="KeyD">防 (D)</div>
+        <div class="act-btn" id="btn-a" data-key="KeyA">攻 (A)</div>
     </div>
 </div>
         <script>
@@ -1317,35 +1317,38 @@ html, body {
         document.getElementById('mobile-ui').style.display = 'block';
     }
 
-    // 發送鍵盤事件 (支援精準 keyCode)
-    const triggerKey = (code, keyCode, isDown) => {
-        window.dispatchEvent(new KeyboardEvent(isDown ? 'keydown' : 'keyup', { 
-            code: code, key: code, keyCode: keyCode, which: keyCode, bubbles: true 
-        }));
+    const triggerKey = (code, isDown) => {
+        window.dispatchEvent(new KeyboardEvent(isDown ? 'keydown' : 'keyup', { code: code, key: code }));
     };
 
-    // ================= 1. 動態矩形動作區 =================
+    // ================= 1. 動態動作區 (形變與變色) =================
     const actionZone = document.getElementById('action-zone');
     let actTouchMap = {};
     let turboTimers = {};
 
-    const startTurbo = (code, kc) => {
-        triggerKey(code, kc, true);
-        if (code === 'KeyD') actionZone.classList.add('d-pressed'); // 觸發動態縮放與變色
+    const startTurbo = (code) => {
+        triggerKey(code, true);
+        
+        // 加入對應的形變 CSS Class
+        if (code === 'KeyD') actionZone.classList.add('d-pressed');
+        if (code === 'KeyJ') actionZone.classList.add('j-pressed');
 
         turboTimers[code] = {
             timeout: setTimeout(() => {
                 turboTimers[code].interval = setInterval(() => {
-                    triggerKey(code, kc, false);
-                    setTimeout(() => triggerKey(code, kc, true), 20);
+                    triggerKey(code, false);
+                    setTimeout(() => triggerKey(code, true), 20);
                 }, 80);
             }, 300)
         };
     };
 
-    const stopTurbo = (code, kc) => {
-        triggerKey(code, kc, false);
-        if (code === 'KeyD') actionZone.classList.remove('d-pressed'); // 復原佈局
+    const stopTurbo = (code) => {
+        triggerKey(code, false);
+        
+        // 移除形變 CSS Class
+        if (code === 'KeyD') actionZone.classList.remove('d-pressed');
+        if (code === 'KeyJ') actionZone.classList.remove('j-pressed');
 
         if (turboTimers[code]) {
             clearTimeout(turboTimers[code].timeout);
@@ -1359,27 +1362,15 @@ html, body {
         for (let i = 0; i < e.changedTouches.length; i++) {
             let touch = e.changedTouches[i];
             let elem = document.elementFromPoint(touch.clientX, touch.clientY);
-            // 尋找按鍵
-            let newBtn = (elem && elem.classList.contains('act-btn')) ? elem : null;
-            let newKey = newBtn ? newBtn.dataset.key : null;
-            let newKc = newBtn ? parseInt(newBtn.dataset.kc) : 0;
-            
-            let oldData = actTouchMap[touch.identifier];
-            let oldKey = oldData ? oldData.key : null;
-            let oldKc = oldData ? oldData.kc : 0;
+            let newKey = (elem && elem.classList.contains('act-btn')) ? elem.dataset.key : null;
+            let oldKey = actTouchMap[touch.identifier];
 
             if (e.type === 'touchend' || e.type === 'touchcancel') newKey = null;
 
             if (oldKey !== newKey) {
-                if (oldKey) {
-                    stopTurbo(oldKey, oldKc);
-                    document.querySelector(`[data-key="${oldKey}"]`).classList.remove('active');
-                }
-                if (newKey) {
-                    startTurbo(newKey, newKc);
-                    document.querySelector(`[data-key="${newKey}"]`).classList.add('active');
-                }
-                actTouchMap[touch.identifier] = newKey ? { key: newKey, kc: newKc } : null;
+                if (oldKey) stopTurbo(oldKey);
+                if (newKey) startTurbo(newKey);
+                actTouchMap[touch.identifier] = newKey;
             }
         }
     };
@@ -1388,22 +1379,12 @@ html, body {
     actionZone.addEventListener('touchmove', handleActionTouch, { passive: false });
     actionZone.addEventListener('touchend', handleActionTouch, { passive: false });
 
-
-    // ================= 2. 搖桿 (十字鍵範圍純單軸鎖定) =================
+    // ================= 2. 搖桿 (精準單軸鎖定) =================
     const joyBase = document.getElementById('joystick-base');
     const joyStick = document.getElementById('joystick-stick');
     const joyZone = document.getElementById('joystick-zone');
-    
-    let joyTouchId = null;
-    let currentJoyKeys = [];
-    let hasDashed = false;
-    const maxRadius = 100; const dashRadius = 80; const axisLockMargin = 25;
-
-    // 方向鍵映射表 { code, keyCode }
-    const dirMap = {
-        'ArrowUp': {c: 'ArrowUp', kc: 38}, 'ArrowDown': {c: 'ArrowDown', kc: 40},
-        'ArrowLeft': {c: 'ArrowLeft', kc: 37}, 'ArrowRight': {c: 'ArrowRight', kc: 39}
-    };
+    let joyTouchId = null, currentJoyKeys = [], hasDashed = false;
+    const maxRadius = 100, dashRadius = 80, axisLockMargin = 25;
 
     const updateJoystick = (x, y) => {
         const rect = joyBase.getBoundingClientRect();
@@ -1415,7 +1396,7 @@ html, body {
         joyStick.style.transform = `translate(calc(-50% + ${renderDist * Math.cos(angle * Math.PI / 180)}px), calc(-50% + ${renderDist * Math.sin(angle * Math.PI / 180)}px))`;
 
         if (distance < 20) {
-            currentJoyKeys.forEach(k => triggerKey(dirMap[k].c, dirMap[k].kc, false));
+            currentJoyKeys.forEach(k => triggerKey(k, false));
             currentJoyKeys = []; hasDashed = false;
             return;
         }
@@ -1431,131 +1412,102 @@ html, body {
         }
 
         if (distance > dashRadius && !hasDashed && newKeys.length === 1 && (newKeys[0] === 'ArrowRight' || newKeys[0] === 'ArrowLeft')) {
-            hasDashed = true;
-            let k = newKeys[0];
-            triggerKey(dirMap[k].c, dirMap[k].kc, false);
-            setTimeout(() => triggerKey(dirMap[k].c, dirMap[k].kc, true), 40);
-        } else if (distance < dashRadius * 0.7) hasDashed = false;
+            hasDashed = true; triggerKey(newKeys[0], false);
+            setTimeout(() => triggerKey(newKeys[0], true), 40);
+        } else if (distance < dashRadius * 0.7) { hasDashed = false; }
 
-        let added = newKeys.filter(k => !currentJoyKeys.includes(k));
-        let removed = currentJoyKeys.filter(k => !newKeys.includes(k));
-        removed.forEach(k => triggerKey(dirMap[k].c, dirMap[k].kc, false));
-        added.forEach(k => triggerKey(dirMap[k].c, dirMap[k].kc, true));
+        currentJoyKeys.filter(k => !newKeys.includes(k)).forEach(k => triggerKey(k, false));
+        newKeys.filter(k => !currentJoyKeys.includes(k)).forEach(k => triggerKey(k, true));
         currentJoyKeys = newKeys;
     };
 
-    joyZone.addEventListener('touchstart', (e) => {
+    const handleJoy = (e) => {
         e.preventDefault();
-        if (joyTouchId === null) {
-            joyTouchId = e.changedTouches[0].identifier;
-            updateJoystick(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
-        }
-    }, { passive: false });
-    joyZone.addEventListener('touchmove', (e) => {
-        e.preventDefault();
-        for (let i=0; i<e.changedTouches.length; i++) {
-            if (e.changedTouches[i].identifier === joyTouchId) updateJoystick(e.changedTouches[i].clientX, e.changedTouches[i].clientY);
-        }
-    }, { passive: false });
-    const endJoystick = (e) => {
-        for (let i=0; i<e.changedTouches.length; i++) {
+        for (let i = 0; i < e.changedTouches.length; i++) {
+            if (joyTouchId === null && e.type === 'touchstart') joyTouchId = e.changedTouches[i].identifier;
             if (e.changedTouches[i].identifier === joyTouchId) {
-                joyTouchId = null; joyStick.style.transform = `translate(-50%, -50%)`;
-                currentJoyKeys.forEach(k => triggerKey(dirMap[k].c, dirMap[k].kc, false));
-                currentJoyKeys = []; hasDashed = false;
+                if (e.type === 'touchend' || e.type === 'touchcancel') {
+                    joyTouchId = null; joyStick.style.transform = `translate(-50%, -50%)`;
+                    currentJoyKeys.forEach(k => triggerKey(k, false)); currentJoyKeys = []; hasDashed = false;
+                } else updateJoystick(e.changedTouches[i].clientX, e.changedTouches[i].clientY);
             }
         }
     };
-    joyZone.addEventListener('touchend', endJoystick); joyZone.addEventListener('touchcancel', endJoystick);
+    joyZone.addEventListener('touchstart', handleJoy, { passive: false });
+    joyZone.addEventListener('touchmove', handleJoy, { passive: false });
+    joyZone.addEventListener('touchend', handleJoy, { passive: false });
 
-
-    // ================= 3. 連點 3 次偵測 & 面板控制 =================
+    // ================= 3. 三擊空白處呼叫面板 =================
     let tapTimes = [];
     let panelTimer = null;
 
     const resetPanelTimer = () => {
         clearTimeout(panelTimer);
-        panelTimer = setTimeout(hidePanel, 5000); // 5秒無操作自動關閉
+        panelTimer = setTimeout(() => hideCombinedPanel(), 5000); // 5秒閒置自動隱藏
     };
 
-    // 監聽全局點擊，過濾掉按鈕區域
     document.addEventListener('touchstart', (e) => {
-        // 如果點在 UI 按鈕上，只重置計時器，不列入 3 連擊計算
-        if (e.target.closest('#action-zone') || e.target.closest('#joystick-zone') || e.target.closest('#panel-main')) {
-            if(document.getElementById('panel-main').style.display === 'flex') resetPanelTimer();
-            return; 
-        }
-
-        const now = Date.now();
+        // 若點擊在虛擬 UI 上，不計入三擊判定
+        if (e.target.closest('#mobile-ui')) return;
+        
+        let now = Date.now();
         tapTimes.push(now);
-        if (tapTimes.length > 3) tapTimes.shift();
-
-        // 判斷是否在 800ms 內連點 3 次
-        if (tapTimes.length === 3 && (now - tapTimes[0] < 800)) {
-            document.getElementById('panel-main').style.display = 'flex';
-            document.getElementById('view-fkeys').style.display = 'flex';
-            document.getElementById('view-keyboard').style.display = 'none';
+        tapTimes = tapTimes.filter(t => now - t < 1000); // 只保留 1 秒內的點擊
+        
+        if (tapTimes.length >= 3) {
+            tapTimes = []; // 重置
+            document.getElementById('panel-combined').style.display = 'flex';
             resetPanelTimer();
-            tapTimes = [];
         }
-    }, { passive: false });
+    }, { passive: true }); // 使用 passive: true 避免干擾遊戲預設的點擊
 
-    const hidePanel = () => {
-        document.getElementById('panel-main').style.display = 'none';
+    const hideCombinedPanel = () => {
+        document.getElementById('panel-combined').style.display = 'none';
         clearTimeout(panelTimer);
     };
 
-    const expandToKeyboard = () => {
-        document.getElementById('view-fkeys').style.display = 'none';
-        document.getElementById('view-keyboard').style.display = 'flex';
+    // ================= 4. 一體化面板邏輯 (+ 折疊鍵盤) =================
+    const toggleKbBtn = document.getElementById('kb-toggle-btn');
+    toggleKbBtn.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        const fullKb = document.getElementById('kb-full');
+        if (fullKb.style.display === 'none') {
+            fullKb.style.display = 'block';
+            toggleKbBtn.innerText = '-';
+        } else {
+            fullKb.style.display = 'none';
+            toggleKbBtn.innerText = '+';
+        }
         resetPanelTimer();
-    };
-
-    // ================= 4. F1~F9 與 完整虛擬鍵盤構建 =================
-    // F1~F9 發送 Shift(16) + 數字鍵(49~57)
-    document.querySelectorAll('.v-fkey').forEach(btn => {
-        btn.addEventListener('touchstart', (e) => {
-            e.preventDefault(); resetPanelTimer();
-            triggerKey('ShiftLeft', 16, true);
-            triggerKey(btn.dataset.code, parseInt(btn.dataset.kc), true);
-            btn.style.background = '#888';
-        });
-        btn.addEventListener('touchend', (e) => {
-            e.preventDefault(); resetPanelTimer();
-            triggerKey(btn.dataset.code, parseInt(btn.dataset.kc), false);
-            triggerKey('ShiftLeft', 16, false);
-            btn.style.background = '#333';
-        });
     });
 
-    // 建立帶有 "." 的鍵盤
     const buildKeyboard = () => {
-        const mkBtn = (txt, code, kc, cls="") => `<div class="v-char ${cls}" data-code="${code}" data-kc="${kc}">${txt}</div>`;
-        const genRow = (str) => str.split("").map(l => mkBtn(l, `Key${l}`, l.charCodeAt(0))).join('');
+        const digits = "1234567890".split("");
+        const row1 = "QWERTYUIOP".split("");
+        const row2 = "ASDFGHJKL".split("");
+        const row3 = "ZXCVBNM.".split(""); // 已加入 "."
 
-        let numRow = "";
-        for(let i=1; i<=9; i++) numRow += mkBtn(i, `Digit${i}`, 48+i);
-        numRow += mkBtn('0', 'Digit0', 48);
+        const makeBtn = (txt, code, cls="") => `<div class="v-char ${cls}" data-code="${code}">${txt}</div>`;
 
-        document.getElementById('kb-digits').innerHTML = numRow;
-        document.getElementById('kb-letters-1').innerHTML = genRow("QWERTYUIOP");
-        document.getElementById('kb-letters-2').innerHTML = genRow("ASDFGHJKL");
-        // Row 3 包含 Backspace(8), "."(190), Enter(13)
-        document.getElementById('kb-letters-3').innerHTML = 
-            mkBtn('Back', 'Backspace', 8, 'wide') + 
-            genRow("ZXCVBNM") + 
-            mkBtn('.', 'Period', 190) + 
-            mkBtn('Enter', 'Enter', 13, 'wide');
+        document.getElementById('kb-digits').innerHTML = digits.map(d => makeBtn(d, `Digit${d}`)).join('');
+        document.getElementById('kb-letters-1').innerHTML = row1.map(l => makeBtn(l, `Key${l}`)).join('');
+        document.getElementById('kb-letters-2').innerHTML = row2.map(l => makeBtn(l, `Key${l}`)).join('');
+        document.getElementById('kb-letters-3').innerHTML = makeBtn('Back', 'Backspace', 'wide') + 
+            row3.map(l => makeBtn(l, l === '.' ? 'Period' : `Key${l}`)).join('') + 
+            makeBtn('Enter', 'Enter', 'wide');
 
+        // 綁定所有 v-char (包含 F1~F9 與完整鍵盤)
         document.querySelectorAll('.v-char').forEach(btn => {
+            if(btn.id === 'kb-toggle-btn') return; // 排除切換按鈕
             btn.addEventListener('touchstart', (e) => {
-                e.preventDefault(); resetPanelTimer();
-                triggerKey(btn.dataset.code, parseInt(btn.dataset.kc), true);
+                e.preventDefault();
+                resetPanelTimer(); // 有操作就重置倒數
+                triggerKey(btn.dataset.code, true);
                 btn.style.background = '#66a';
             });
             btn.addEventListener('touchend', (e) => {
-                e.preventDefault(); resetPanelTimer();
-                triggerKey(btn.dataset.code, parseInt(btn.dataset.kc), false);
+                e.preventDefault();
+                triggerKey(btn.dataset.code, false);
                 btn.style.background = '';
             });
         });
