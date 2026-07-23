@@ -709,40 +709,49 @@ html, body {
     #joystick-inner-ring { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100px; height: 100px; border: 2px dashed rgba(255, 255, 255, 0.25); border-radius: 50%; }
     #joystick-stick { position: absolute; top: 50%; left: 50%; width: 85px; height: 85px; background: rgba(255, 255, 255, 0.65); border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.6); transform: translate(-50%, -50%); transition: transform 0.04s linear; }
 
-    /* === 動作區 === */
+    /* === 矩形動作按鍵區 (尺寸、外框、背景底色同步搖桿) === */
     #action-zone {
         position: absolute; right: 40px; bottom: 40px;
-        width: 200px; height: 200px;
-        border-radius: 50%;
+        width: 240px; height: 200px; /* 寬度稍微拉長以適應三個按鍵 */
         background: rgba(0, 0, 0, 0.3);
         border: 2px solid rgba(255, 255, 255, 0.4);
+        border-radius: 16px;
         box-shadow: 0 0 20px rgba(0,0,0,0.5);
         pointer-events: auto;
+        
+        display: grid; gap: 6px; padding: 6px;
+        grid-template-columns: 1fr 1fr; 
+        grid-template-rows: 1fr 1fr;
+        /* 形變過渡動畫 */
+        transition: grid-template-columns 0.15s, grid-template-rows 0.15s;
     }
 
-    #action-svg {
-        position: absolute; top: 0; left: 0;
-        width: 100%; height: 100%; pointer-events: none;
-    }
+    /* 形變類別控制 */
+    #action-zone.layout-d { grid-template-columns: 1fr 2.5fr; }
+    #action-zone.layout-j { grid-template-rows: 2.5fr 1fr; }
+    #action-zone.layout-a { grid-template-rows: 1fr 2.5fr; }
 
-    .svg-sector {
-        stroke: rgba(255, 255, 255, 0.4);
-        stroke-width: 1.5px;
-        fill: rgba(255, 255, 255, 0.15);
-        /* 移除 transition，填色瞬間切換 */
+    /* 按鍵本體 (預設半透明白灰，無毛玻璃) */
+    .act-btn {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 10px; color: white;
+        font-size: 24px; font-weight: bold;
+        display: flex; justify-content: center; align-items: center;
+        transition: background 0.1s;
     }
+    
+    #btn-j { grid-column: 1; grid-row: 1; }
+    #btn-a { grid-column: 1; grid-row: 2; }
+    #btn-d { grid-column: 2; grid-row: 1 / span 2; }
 
-    #path-j.active { fill: rgba(50, 150, 255, 0.6); }
-    #path-a.active { fill: rgba(255, 50, 50, 0.6); }
-    #path-d.active { fill: rgba(50, 255, 50, 0.6); }
+    /* 點擊亮起對應顏色 */
+    #btn-j.active { background: rgba(50, 150, 255, 0.6); }
+    #btn-a.active { background: rgba(255, 50, 50, 0.6); }
+    #btn-d.active { background: rgba(50, 255, 50, 0.6); }
 
-    .act-text {
-        position: absolute; transform: translate(-50%, -50%);
-        color: white; font-weight: bold; font-size: 20px;
-        pointer-events: none;
-        /* 移除 transition，文字瞬間消失 */
-    }
-    .act-text.hidden { opacity: 0; }
+    /* 文字隱藏 (無過渡動畫，瞬間消失) */
+    .act-btn span { pointer-events: none; }
+    .act-btn.active span { opacity: 0; } 
 
     /* === 面板綜合區 === */
     .hidden-panel {
@@ -751,7 +760,7 @@ html, body {
         border: 2px solid rgba(255, 255, 255, 0.2); box-shadow: 0 8px 32px rgba(0,0,0,0.8);
         pointer-events: auto; flex-direction: column; gap: 8px; z-index: 10000;
         width: 85%; max-width: 650px;
-        opacity: 0; transition: opacity 0.3s ease;
+        opacity: 0; transition: opacity 0.3s ease; /* 淡出動畫 */
     }
     .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
     .ctrl-btn { background: #444; color: white; border: none; border-radius: 8px; width: 32px; height: 32px; font-size: 20px; font-weight: bold; display: flex; justify-content: center; align-items: center; }
@@ -1250,19 +1259,11 @@ html, body {
         </div>
     </div>
 
-    <!-- SVG 分離扇形與中心空洞動作區 -->
+    <!-- 矩形動態動作按鍵區 -->
     <div id="action-zone">
-        <svg id="action-svg" viewBox="0 0 200 200">
-            <!-- 視覺標示：中心空洞區 (D+J+A 觸發區)，半徑縮小至 25 -->
-            <circle cx="100" cy="100" r="25" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.2)" stroke-dasharray="4 4" />
-            <path id="path-a" class="svg-sector" />
-            <path id="path-j" class="svg-sector" />
-            <path id="path-d" class="svg-sector" />
-        </svg>
-        
-        <span class="act-text" id="text-j">跳 (J)</span>
-        <span class="act-text" id="text-a">攻 (A)</span>
-        <span class="act-text" id="text-d">防 (D)</span>
+        <div class="act-btn" id="btn-j" data-key="KeyJ"><span>跳 (J)</span></div>
+        <div class="act-btn" id="btn-a" data-key="KeyA"><span>攻 (A)</span></div>
+        <div class="act-btn" id="btn-d" data-key="KeyD"><span>防 (D)</span></div>
     </div>
 </div>
         <script>
@@ -1287,7 +1288,7 @@ html, body {
     
     <script src="js/game.js"></script>
 <script>
-if (/Android|webOS|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+    if (/Android|webOS|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
         document.getElementById('mobile-ui').style.display = 'block';
     }
 
@@ -1295,104 +1296,86 @@ if (/Android|webOS|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
         window.dispatchEvent(new KeyboardEvent(isDown ? 'keydown' : 'keyup', { code: code, key: code }));
     };
 
-    // ================= 1. 分離扇形動作區 =================
+    // ================= 1. 矩形動作區 (邊界判定 & 30ms 延遲恢復) =================
     const actionZone = document.getElementById('action-zone');
     let actTouchMap = {};
     let turboTimers = {};
-    let globalActiveKeys = new Set();
-    let shapeRestoreTimer = null; // 控制恢復形狀的 100ms 延遲計時器
+    let globalActiveActionKeys = new Set();
+    let layoutRecoverTimer = null; // 控制 30ms 延遲的計時器
 
-    let currentSeps = { bottom: 90, left: 180, top: 270 };
-    let targetSeps = { bottom: 90, left: 180, top: 270 };
-    const gap = 8;    // 扇形之間的空隙大幅擴大
-    const rIn = 25;   // 中心空洞半徑大幅縮小
-    const rOut = 98;
-
-    const updateTargetAngles = () => {
-        if (globalActiveKeys.size === 1) {
-            clearTimeout(shapeRestoreTimer); // 只要有新的單鍵按住，立刻清除恢復計時，瞬間改變形狀
-            if (globalActiveKeys.has('KeyJ')) {
-                targetSeps = { bottom: 90, left: 240, top: 270 };
-            } else if (globalActiveKeys.has('KeyA')) {
-                targetSeps = { bottom: 90, left: 120, top: 270 };
-            } else if (globalActiveKeys.has('KeyD')) {
-                targetSeps = { bottom: 30, left: 180, top: 330 };
-            }
+    // 更新佈局 (僅單鍵按下時變形，全放開或多鍵時 30ms 後恢復)
+    const updateLayout = () => {
+        if (globalActiveActionKeys.size === 1) {
+            clearTimeout(layoutRecoverTimer);
+            if (globalActiveActionKeys.has('KeyD')) actionZone.className = 'layout-d';
+            else if (globalActiveActionKeys.has('KeyJ')) actionZone.className = 'layout-j';
+            else if (globalActiveActionKeys.has('KeyA')) actionZone.className = 'layout-a';
         } else {
-            // 放開按鍵（或多鍵同按）時，延遲 100ms 才恢復預設形狀
-            clearTimeout(shapeRestoreTimer);
-            shapeRestoreTimer = setTimeout(() => {
-                targetSeps = { bottom: 90, left: 180, top: 270 };
-            }, 100);
+            clearTimeout(layoutRecoverTimer);
+            layoutRecoverTimer = setTimeout(() => {
+                actionZone.className = ''; // 恢復預設比例
+            }, 30);
         }
     };
 
-    const pressActionKeys = (keys, isDown) => {
-        keys.forEach(code => {
-            triggerKey(code, isDown);
-            let short = code.replace('Key', '').toLowerCase();
-            let path = document.getElementById(`path-${short}`);
-            let text = document.getElementById(`text-${short}`);
-            
-            if (isDown) {
-                if (path) path.classList.add('active');
-                if (text) text.classList.add('hidden'); // 瞬間隱藏文字
-                if (!turboTimers[code]) {
-                    turboTimers[code] = {
-                        timeout: setTimeout(() => {
-                            turboTimers[code].interval = setInterval(() => {
-                                triggerKey(code, false); setTimeout(() => triggerKey(code, true), 20);
-                            }, 80);
-                        }, 300)
-                    };
-                }
-            } else {
-                if (path) path.classList.remove('active');
-                if (text) text.classList.remove('hidden'); // 瞬間顯示文字
-                if (turboTimers[code]) {
-                    clearTimeout(turboTimers[code].timeout); clearInterval(turboTimers[code].interval); delete turboTimers[code];
-                }
-            }
-        });
-    };
-
-    const getShortestAngleDiff = (a, b) => Math.min(Math.abs(a - b), 360 - Math.abs(a - b));
-
-    const getActionKeys = (x, y, isInitialTouch, cx, cy) => {
-        const dx = x - cx; const dy = y - cy;
-        const dist = Math.hypot(dx, dy);
-        let angle = Math.atan2(dy, dx) * 180 / Math.PI;
-        if (angle < 0) angle += 360;
-
-        if (isInitialTouch) {
-            if (dist < rIn) return ['KeyD', 'KeyJ', 'KeyA'];
-            
-            if (getShortestAngleDiff(angle, currentSeps.bottom) < 15 && dist >= rIn) return ['KeyA', 'KeyD'];
-            if (getShortestAngleDiff(angle, currentSeps.left) < 15 && dist >= rIn) return ['KeyJ', 'KeyA'];
-            if (getShortestAngleDiff(angle, currentSeps.top) < 15 && dist >= rIn) return ['KeyJ', 'KeyD'];
-        }
-
-        let checkAngle = angle;
-        if (checkAngle < currentSeps.bottom) checkAngle += 360;
+    // 計算手指定位 (包含中心隱形孔洞、動態邊界縫隙)
+    const getActionKeys = (x, y, isInitial) => {
+        const rect = actionZone.getBoundingClientRect();
+        const localX = x - rect.left;
+        const localY = y - rect.top;
         
-        if (checkAngle >= currentSeps.bottom && checkAngle < currentSeps.left) return ['KeyA'];
-        if (checkAngle >= currentSeps.left && checkAngle < currentSeps.top) return ['KeyJ'];
-        return ['KeyD'];
+        if (isInitial) {
+            // 判定隱形中心孔洞 (半徑 35 像素內 ➔ D+J+A)
+            if (Math.hypot(localX - rect.width/2, localY - rect.height/2) < 35) {
+                return ['KeyD', 'KeyJ', 'KeyA'];
+            }
+            
+            // 即時抓取當前 Grid 內按鈕的實際邊界，用於動態縫隙判定
+            const jRect = document.getElementById('btn-j').getBoundingClientRect();
+            const dRect = document.getElementById('btn-d').getBoundingClientRect();
+            const divX = dRect.left - rect.left;   // D 與 J/A 的垂直交界
+            const divY = jRect.bottom - rect.top;  // J 與 A 的水平交界
+
+            // 垂直縫隙判定 (容錯 25 像素)
+            if (Math.abs(localX - divX) < 25) {
+                return localY < divY ? ['KeyD', 'KeyJ'] : ['KeyD', 'KeyA'];
+            }
+            // 水平縫隙判定 (容錯 25 像素)
+            if (localX < divX && Math.abs(localY - divY) < 25) {
+                return ['KeyJ', 'KeyA'];
+            }
+        }
+        
+        // 滑動或一般單鍵點擊 ➔ 使用底層 elementFromPoint 完美貼合 Grid
+        let elem = document.elementFromPoint(x, y);
+        if (elem && elem.dataset && elem.dataset.key) return [elem.dataset.key];
+        if (elem && elem.parentElement && elem.parentElement.dataset && elem.parentElement.dataset.key) return [elem.parentElement.dataset.key];
+        
+        // 備用判定 (防止滑動極速越界時找不到 element)
+        const jRect = document.getElementById('btn-j').getBoundingClientRect();
+        const divX = document.getElementById('btn-d').getBoundingClientRect().left - rect.left;
+        const divY = jRect.bottom - rect.top;
+        
+        if (localX > divX) return ['KeyD'];
+        if (localY < divY) return ['KeyJ'];
+        return ['KeyA'];
     };
 
     const handleActionTouch = (e) => {
         e.preventDefault();
         let newTouchMap = { ...actTouchMap };
         const rect = actionZone.getBoundingClientRect();
-        const cx = rect.left + rect.width / 2, cy = rect.top + rect.height / 2;
 
         for (let i = 0; i < e.changedTouches.length; i++) {
             let touch = e.changedTouches[i];
-            const dist = Math.hypot(touch.clientX - cx, touch.clientY - cy);
-            if (e.type === 'touchend' || e.type === 'touchcancel' || dist > rect.width / 2) {
+            
+            // 離開動作區範圍判定
+            if (e.type === 'touchend' || e.type === 'touchcancel' || 
+                touch.clientX < rect.left || touch.clientX > rect.right || 
+                touch.clientY < rect.top || touch.clientY > rect.bottom) {
                 delete newTouchMap[touch.identifier];
             } else {
-                newTouchMap[touch.identifier] = getActionKeys(touch.clientX, touch.clientY, e.type === 'touchstart', cx, cy);
+                newTouchMap[touch.identifier] = getActionKeys(touch.clientX, touch.clientY, e.type === 'touchstart');
             }
         }
 
@@ -1402,60 +1385,31 @@ if (/Android|webOS|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
         let added = [...newKeysSet].filter(k => !oldKeys.has(k));
         let removed = [...oldKeys].filter(k => !newKeysSet.has(k));
 
-        if (removed.length > 0) pressActionKeys(removed, false);
-        if (added.length > 0) pressActionKeys(added, true);
+        removed.forEach(k => {
+            triggerKey(k, false);
+            let btn = document.getElementById(`btn-${k.slice(-1).toLowerCase()}`);
+            if (btn) btn.classList.remove('active');
+            if (turboTimers[k]) { clearTimeout(turboTimers[k].timeout); clearInterval(turboTimers[k].interval); delete turboTimers[k]; }
+        });
+
+        added.forEach(k => {
+            triggerKey(k, true);
+            let btn = document.getElementById(`btn-${k.slice(-1).toLowerCase()}`);
+            if (btn) btn.classList.add('active');
+            if (!turboTimers[k]) {
+                turboTimers[k] = { timeout: setTimeout(() => { turboTimers[k].interval = setInterval(() => { triggerKey(k, false); setTimeout(() => triggerKey(k, true), 20); }, 80); }, 300) };
+            }
+        });
 
         actTouchMap = newTouchMap;
-        globalActiveKeys = newKeysSet;
-        updateTargetAngles();
+        globalActiveActionKeys = newKeysSet;
+        updateLayout();
     };
 
     actionZone.addEventListener('touchstart', handleActionTouch, { passive: false });
     actionZone.addEventListener('touchmove', handleActionTouch, { passive: false });
     actionZone.addEventListener('touchend', handleActionTouch, { passive: false });
     actionZone.addEventListener('touchcancel', handleActionTouch, { passive: false });
-
-    // ================= SVG 渲染迴圈 (瞬間變形版) =================
-    const getSVGPath = (start, end) => {
-        const cx = 100, cy = 100;
-        const sRad = start * Math.PI / 180, eRad = end * Math.PI / 180;
-        const x1 = cx + rOut * Math.cos(sRad), y1 = cy + rOut * Math.sin(sRad);
-        const x2 = cx + rOut * Math.cos(eRad), y2 = cy + rOut * Math.sin(eRad);
-        const x3 = cx + rIn * Math.cos(eRad), y3 = cy + rIn * Math.sin(eRad);
-        const x4 = cx + rIn * Math.cos(sRad), y4 = cy + rIn * Math.sin(sRad);
-        let diff = end - start; if (diff < 0) diff += 360;
-        let largeArc = (diff > 180) ? 1 : 0;
-        return `M ${x1} ${y1} A ${rOut} ${rOut} 0 ${largeArc} 1 ${x2} ${y2} L ${x3} ${y3} A ${rIn} ${rIn} 0 ${largeArc} 0 ${x4} ${y4} Z`;
-    };
-
-    const updateTextPos = (id, start, end) => {
-        let diff = end - start; if (diff < 0) diff += 360;
-        let mid = start + diff / 2;
-        const r = 65; 
-        const el = document.getElementById(id);
-        if (el) {
-            el.style.left = `${100 + r * Math.cos(mid * Math.PI / 180)}px`;
-            el.style.top = `${100 + r * Math.sin(mid * Math.PI / 180)}px`;
-        }
-    };
-
-    const animateSectors = () => {
-        // 直接賦值，捨棄平滑過渡，實現瞬間形變
-        currentSeps.bottom = targetSeps.bottom;
-        currentSeps.left = targetSeps.left;
-        currentSeps.top = targetSeps.top;
-
-        document.getElementById('path-a').setAttribute('d', getSVGPath(currentSeps.bottom + gap, currentSeps.left - gap));
-        document.getElementById('path-j').setAttribute('d', getSVGPath(currentSeps.left + gap, currentSeps.top - gap));
-        document.getElementById('path-d').setAttribute('d', getSVGPath(currentSeps.top + gap, currentSeps.bottom + 360 - gap));
-
-        updateTextPos('text-a', currentSeps.bottom + gap, currentSeps.left - gap);
-        updateTextPos('text-j', currentSeps.left + gap, currentSeps.top - gap);
-        updateTextPos('text-d', currentSeps.top + gap, currentSeps.bottom + 360 - gap);
-
-        requestAnimationFrame(animateSectors);
-    };
-    animateSectors();
 
 
     // ================= 2. 十字單軸搖桿 =================
@@ -1501,7 +1455,7 @@ if (/Android|webOS|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
     joyZone.addEventListener('touchend', endJoystick); joyZone.addEventListener('touchcancel', endJoystick);
 
 
-    // ================= 3. 三指下滑面板 (3秒閒置淡出) =================
+    // ================= 3. 三指下滑綜合面板 (3秒閒置淡出) =================
     let threeFingerStartY = null;
     let panelIdleTimer = null;
     const panelUI = document.getElementById('panel-unified');
@@ -1530,28 +1484,22 @@ if (/Android|webOS|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
 
     panelUI.addEventListener('touchstart', resetPanelTimer, { passive: true });
 
-    // 修改為偵測 3 根手指
+    // 觸控三指抓取 Y 軸起點
     document.addEventListener('touchstart', (e) => {
         if (e.touches.length === 3 && !e.target.closest('#action-zone') && !e.target.closest('#joystick-zone')) {
-            // 計算三根手指的平均 Y 座標
             threeFingerStartY = (e.touches[0].clientY + e.touches[1].clientY + e.touches[2].clientY) / 3;
         }
     }, { passive: false });
 
+    // 判定三指往下拉
     document.addEventListener('touchmove', (e) => {
         if (e.touches.length === 3 && threeFingerStartY !== null) {
             let currentY = (e.touches[0].clientY + e.touches[1].clientY + e.touches[2].clientY) / 3;
-            // 三指下滑 (Y座標增加)
-            if (currentY - threeFingerStartY > 60) { 
+            if (currentY - threeFingerStartY > 60) { // 下滑超過 60 像素
                 showPanel();
                 threeFingerStartY = null;
             }
         }
-    });
-
-    // 觸控結束時重置
-    document.addEventListener('touchend', (e) => {
-        if (e.touches.length < 3) threeFingerStartY = null;
     });
 
     let kbExpanded = false;
