@@ -721,6 +721,8 @@ html, body {
 
     .svg-sector {
         stroke: rgba(255, 255, 255, 0.4); stroke-width: 1.5px;
+        /* 加入 round 屬性，讓切口變成沒有尖角的平滑圓潤直線 */
+        stroke-linejoin: round; stroke-linecap: round; 
         fill: rgba(255, 255, 255, 0.15); transition: fill 0.15s ease;
     }
     #path-j.active { fill: rgba(50, 150, 255, 0.6); }
@@ -731,6 +733,8 @@ html, body {
         position: absolute; transform: translate(-50%, -50%);
         color: white; font-weight: bold; font-size: 20px;
         pointer-events: none; 
+        /* 完全移除動畫，實現瞬間顯示/隱藏 */
+        transition: none; 
     }
     .act-text.hidden { opacity: 0; visibility: hidden; }
 
@@ -1198,7 +1202,7 @@ html, body {
             <div id="debug-text"></div>
         </div>
 <div id="mobile-ui" style="display: none;">
-    <!-- 綜合面板 -->
+    <!-- 綜合面板：三指下滑呼出 -->
     <div id="panel-unified" class="hidden-panel">
         <div class="panel-header">
             <span style="color:#aaa; font-size:14px; margin-left: 5px;">系統與輸入功能</span>
@@ -1239,10 +1243,10 @@ html, body {
         </div>
     </div>
 
-    <!-- SVG 分離扇形動作區 -->
+    <!-- SVG 分離扇形與中心空洞動作區 -->
     <div id="action-zone">
         <svg id="action-svg" viewBox="0 0 200 200">
-            <!-- 視覺標示：中心空洞縮小至 15 -->
+            <!-- 視覺標示：中心空洞區縮小至半徑 15 -->
             <circle cx="100" cy="100" r="15" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.2)" stroke-dasharray="4 4" />
             <path id="path-a" class="svg-sector" />
             <path id="path-j" class="svg-sector" />
@@ -1276,18 +1280,17 @@ html, body {
     
     <script src="js/game.js"></script>
 <script>
-    // ================= 智能鍵盤與觸控偵測 =================
+    // ================= 智能顯示與隱藏偵測 =================
     const mobileUI = document.getElementById('mobile-ui');
-    const isTouchSupported = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
     
-    if (isTouchSupported) mobileUI.style.display = 'block';
-
+    // 監聽實體鍵盤：敲擊實體鍵盤時，瞬間隱藏虛擬按鍵
     window.addEventListener('keydown', (e) => {
         if (e.isTrusted) mobileUI.style.display = 'none';
     });
 
+    // 監聽螢幕觸控：預設為隱藏，第一次輕觸螢幕瞬間喚醒顯示
     window.addEventListener('touchstart', (e) => {
-        if (e.isTrusted && isTouchSupported && mobileUI.style.display === 'none') {
+        if (e.isTrusted && mobileUI.style.display === 'none') {
             mobileUI.style.display = 'block';
         }
     }, { passive: true });
@@ -1296,42 +1299,31 @@ html, body {
         window.dispatchEvent(new KeyboardEvent(isDown ? 'keydown' : 'keyup', { code: code, key: code }));
     };
 
-    // ================= 1. 分離扇形動作區 (空隙動態閉合與延遲恢復) =================
+    // ================= 1. 分離扇形動作區 =================
     const actionZone = document.getElementById('action-zone');
     let actTouchMap = {};
     let turboTimers = {};
     let globalActiveKeys = new Set();
     let shapeRestoreTimer = null; 
 
-    // 邊界線與空隙度的動態變數
     let currentSeps = { bottom: 90, left: 180, top: 270 };
     let targetSeps = { bottom: 90, left: 180, top: 270 };
-    let currentGaps = { bottom: 2.5, left: 2.5, top: 2.5 };
-    let targetGaps = { bottom: 2.5, left: 2.5, top: 2.5 };
-    
-    const rIn = 15;   // 孔洞大幅縮小至 15
+    const gap = 2.5;  
+    const rIn = 15;   // 中心空洞縮小至 15
     const rOut = 98;  
 
-    // 計算目標形狀與空隙的貼合
     const updateTargetAngles = () => {
         clearTimeout(shapeRestoreTimer);
         if (globalActiveKeys.size === 1) {
-            if (globalActiveKeys.has('KeyJ')) {
-                targetSeps = { bottom: 90, left: 240, top: 270 };
-                targetGaps = { bottom: 2.5, left: 0, top: 2.5 }; // J/A 之間空隙貼合為 0
-            } else if (globalActiveKeys.has('KeyA')) {
-                targetSeps = { bottom: 90, left: 120, top: 270 };
-                targetGaps = { bottom: 2.5, left: 0, top: 2.5 }; // J/A 之間空隙貼合為 0
-            } else if (globalActiveKeys.has('KeyD')) {
-                targetSeps = { bottom: 30, left: 180, top: 330 };
-                targetGaps = { bottom: 0, left: 2.5, top: 0 }; // D 與上下相鄰的空隙貼合為 0
-            }
+            // 單獨按壓時，目標按鍵縮小為 30 度，其餘按鍵對稱包覆
+            if (globalActiveKeys.has('KeyJ')) targetSeps = { bottom: 90, left: 240, top: 270 }; // J=30
+            else if (globalActiveKeys.has('KeyA')) targetSeps = { bottom: 90, left: 120, top: 270 }; // A=30
+            else if (globalActiveKeys.has('KeyD')) targetSeps = { bottom: 15, left: 180, top: 345 }; // D=30 (15到345)
         } else {
-            // 延遲 100ms 才恢復，提升連按時的穩定度
+            // 放開後延遲 150ms 才開始恢復原狀
             shapeRestoreTimer = setTimeout(() => {
                 targetSeps = { bottom: 90, left: 180, top: 270 };
-                targetGaps = { bottom: 2.5, left: 2.5, top: 2.5 };
-            }, 100);
+            }, 150);
         }
     };
 
@@ -1344,7 +1336,7 @@ html, body {
             
             if (isDown) {
                 if (path) path.classList.add('active');
-                if (text) text.classList.add('hidden');
+                if (text) text.classList.add('hidden'); // 瞬間隱藏
                 if (!turboTimers[code]) {
                     turboTimers[code] = {
                         timeout: setTimeout(() => {
@@ -1354,7 +1346,7 @@ html, body {
                 }
             } else {
                 if (path) path.classList.remove('active');
-                if (text) text.classList.remove('hidden');
+                if (text) text.classList.remove('hidden'); // 瞬間顯示
                 if (turboTimers[code]) { clearTimeout(turboTimers[code].timeout); clearInterval(turboTimers[code].interval); delete turboTimers[code]; }
             }
         });
@@ -1369,13 +1361,10 @@ html, body {
         if (angle < 0) angle += 360;
 
         if (isInitialTouch) {
-            // 中心孔判定 (r < 15)
             if (dist < rIn) return ['KeyD', 'KeyJ', 'KeyA'];
-            
-            // 雙鍵判定範圍大幅擴大至 ±22度 (總寬容度近 45度)
-            if (getShortestAngleDiff(angle, currentSeps.bottom) < 22 && dist >= rIn) return ['KeyA', 'KeyD'];
-            if (getShortestAngleDiff(angle, currentSeps.left) < 22 && dist >= rIn) return ['KeyJ', 'KeyA'];
-            if (getShortestAngleDiff(angle, currentSeps.top) < 22 && dist >= rIn) return ['KeyJ', 'KeyD'];
+            if (getShortestAngleDiff(angle, currentSeps.bottom) < 10 && dist >= rIn) return ['KeyA', 'KeyD'];
+            if (getShortestAngleDiff(angle, currentSeps.left) < 10 && dist >= rIn) return ['KeyJ', 'KeyA'];
+            if (getShortestAngleDiff(angle, currentSeps.top) < 10 && dist >= rIn) return ['KeyJ', 'KeyD'];
         }
 
         let checkAngle = angle;
@@ -1449,33 +1438,26 @@ html, body {
         currentSeps.left += (targetSeps.left - currentSeps.left) * 0.25;
         currentSeps.top += (targetSeps.top - currentSeps.top) * 0.25;
 
-        currentGaps.bottom += (targetGaps.bottom - currentGaps.bottom) * 0.25;
-        currentGaps.left += (targetGaps.left - currentGaps.left) * 0.25;
-        currentGaps.top += (targetGaps.top - currentGaps.top) * 0.25;
+        document.getElementById('path-a').setAttribute('d', getSVGPath(currentSeps.bottom + gap, currentSeps.left - gap));
+        document.getElementById('path-j').setAttribute('d', getSVGPath(currentSeps.left + gap, currentSeps.top - gap));
+        document.getElementById('path-d').setAttribute('d', getSVGPath(currentSeps.top + gap, currentSeps.bottom + 360 - gap));
 
-        // 計算加入了動態閉合的空隙
-        document.getElementById('path-a').setAttribute('d', getSVGPath(currentSeps.bottom + currentGaps.bottom, currentSeps.left - currentGaps.left));
-        document.getElementById('path-j').setAttribute('d', getSVGPath(currentSeps.left + currentGaps.left, currentSeps.top - currentGaps.top));
-        document.getElementById('path-d').setAttribute('d', getSVGPath(currentSeps.top + currentGaps.top, currentSeps.bottom + 360 - currentGaps.bottom));
-
-        updateTextPos('text-a', currentSeps.bottom + currentGaps.bottom, currentSeps.left - currentGaps.left);
-        updateTextPos('text-j', currentSeps.left + currentGaps.left, currentSeps.top - currentGaps.top);
-        updateTextPos('text-d', currentSeps.top + currentGaps.top, currentSeps.bottom + 360 - currentGaps.bottom);
+        updateTextPos('text-a', currentSeps.bottom + gap, currentSeps.left - gap);
+        updateTextPos('text-j', currentSeps.left + gap, currentSeps.top - gap);
+        updateTextPos('text-d', currentSeps.top + gap, currentSeps.bottom + 360 - gap);
 
         requestAnimationFrame(animateSectors);
     };
     animateSectors();
 
 
-    // ================= 2. 十字單軸搖桿 (高精度單軸容錯) =================
+    // ================= 2. 十字單軸搖桿 (結合 D 鍵擴大十字區域) =================
     const joyBase = document.getElementById('joystick-base');
     const joyStick = document.getElementById('joystick-stick');
     const joyZone = document.getElementById('joystick-zone');
     let joyTouchId = null, currentJoyKeys = [], hasDashed = false;
     const maxJoyRadius = 100, dashRadius = 80;
-    
-    // 擴大純單軸判定：35度。意味著每個方向有高達 70 度的純軸空間，只有極限斜角 20 度會觸發雙向！
-    const axisLockMargin = 35; 
+    const defaultAxisLockMargin = 25; 
 
     const updateJoystick = (x, y) => {
         const rect = joyBase.getBoundingClientRect();
@@ -1488,11 +1470,15 @@ html, body {
         if (distance < 20) {
             currentJoyKeys.forEach(k => triggerKey(k, false)); currentJoyKeys = []; hasDashed = false; return;
         }
+
+        // 動態計算十字鎖定區間：如果 D 鍵被按住，大幅擴大單軸鎖定範圍 (幾乎只允許純方向)
+        const currentAxisLockMargin = globalActiveKeys.has('KeyD') ? 40 : defaultAxisLockMargin;
+
         let newKeys = [];
-        if (angle > -axisLockMargin && angle < axisLockMargin) newKeys.push('ArrowRight');
-        else if (angle > 180 - axisLockMargin || angle < -180 + axisLockMargin) newKeys.push('ArrowLeft');
-        else if (angle > 90 - axisLockMargin && angle < 90 + axisLockMargin) newKeys.push('ArrowDown');
-        else if (angle > -90 - axisLockMargin && angle < -90 + axisLockMargin) newKeys.push('ArrowUp');
+        if (angle > -currentAxisLockMargin && angle < currentAxisLockMargin) newKeys.push('ArrowRight');
+        else if (angle > 180 - currentAxisLockMargin || angle < -180 + currentAxisLockMargin) newKeys.push('ArrowLeft');
+        else if (angle > 90 - currentAxisLockMargin && angle < 90 + currentAxisLockMargin) newKeys.push('ArrowDown');
+        else if (angle > -90 - currentAxisLockMargin && angle < -90 + currentAxisLockMargin) newKeys.push('ArrowUp');
         else {
             if (Math.abs(angle) < 90) newKeys.push('ArrowRight'); else newKeys.push('ArrowLeft');
             if (angle > 0) newKeys.push('ArrowDown'); else newKeys.push('ArrowUp');
@@ -1513,7 +1499,7 @@ html, body {
     joyZone.addEventListener('touchend', endJoystick); joyZone.addEventListener('touchcancel', endJoystick);
 
 
-    // ================= 3. 三指下滑面板 =================
+    // ================= 3. 三指下滑面板 (3秒閒置淡出) =================
     let threeFingerStartY = null;
     let panelIdleTimer = null;
     const panelUI = document.getElementById('panel-unified');
@@ -1550,7 +1536,7 @@ html, body {
     document.addEventListener('touchmove', (e) => {
         if (e.touches.length === 3 && threeFingerStartY !== null) {
             let currentY = (e.touches[0].clientY + e.touches[1].clientY + e.touches[2].clientY) / 3;
-            if (currentY - threeFingerStartY > 60) { // 三指下滑
+            if (currentY - threeFingerStartY > 60) { 
                 showPanel();
                 threeFingerStartY = null;
             }
