@@ -695,76 +695,86 @@ html, body {
         user-select: none; -webkit-user-select: none;
     }
 
-    /* === UI 預設隱藏邏輯 === */
+    /* 預設隱藏 UI，由 JS 偵測輕觸顯示 */
     #mobile-ui {
         position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
-        z-index: 9999; pointer-events: none;
-        opacity: 0; transition: opacity 0.3s ease;
+        z-index: 9999;
+        opacity: 0; 
+        pointer-events: none; /* 隱藏時完全不干擾畫面 */
+        transition: opacity 0.3s ease;
     }
     #mobile-ui.visible {
-        opacity: 1; pointer-events: auto;
+        opacity: 1;
+    }
+    #mobile-ui.visible #joystick-zone,
+    #mobile-ui.visible #action-zone,
+    #mobile-ui.visible .hidden-panel {
+        pointer-events: auto; /* 顯示時才允許操作 */
     }
 
-    /* === 搖桿與十字鍵變形 === */
-    #joystick-zone { position: absolute; left: 40px; bottom: 40px; width: 220px; height: 220px; pointer-events: auto; }
+    /* === 搖桿 === */
+    #joystick-zone { position: absolute; left: 40px; bottom: 40px; width: 220px; height: 220px; }
     #joystick-base { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 200px; background: rgba(0, 0, 0, 0.3); border: 2px solid rgba(255, 255, 255, 0.4); border-radius: 50%; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
     
-    #dpad-cross .cross-v, #dpad-cross .cross-h { 
-        position: absolute; background: rgba(255, 255, 255, 0.15); 
-        top: 50%; left: 50%; transform: translate(-50%, -50%);
-        transition: all 0.15s cubic-bezier(0.1, 0.7, 0.1, 1); /* 十字鍵動畫 */
-    }
+    /* 搖桿十字鍵 (支援 D 鍵按下時變粗亮黃色) */
+    #dpad-cross .cross-v, #dpad-cross .cross-h { position: absolute; background: rgba(255, 255, 255, 0.15); top: 50%; left: 50%; transform: translate(-50%, -50%); transition: all 0.15s ease; }
     #dpad-cross .cross-v { width: 50px; height: 180px; border-radius: 10px; }
     #dpad-cross .cross-h { width: 180px; height: 50px; border-radius: 10px; }
     
-    /* 當 D 鍵被按下時，搖桿十字鍵爆發擴大並變成黃色 */
-    #joystick-zone.d-locked #dpad-cross .cross-v { height: 260px; background: rgba(255, 255, 0, 0.65); box-shadow: 0 0 15px rgba(255, 255, 0, 0.8); }
-    #joystick-zone.d-locked #dpad-cross .cross-h { width: 260px; background: rgba(255, 255, 0, 0.65); box-shadow: 0 0 15px rgba(255, 255, 0, 0.8); }
+    /* D 被按下時的十字鍵強化 */
+    #dpad-cross.d-pressed .cross-v { width: 75px; background: rgba(255, 255, 0, 0.7); box-shadow: 0 0 15px rgba(255,255,0,0.5); }
+    #dpad-cross.d-pressed .cross-h { height: 75px; background: rgba(255, 255, 0, 0.7); box-shadow: 0 0 15px rgba(255,255,0,0.5); }
 
     #joystick-inner-ring { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100px; height: 100px; border: 2px dashed rgba(255, 255, 255, 0.25); border-radius: 50%; }
     #joystick-stick { position: absolute; top: 50%; left: 50%; width: 85px; height: 85px; background: rgba(255, 255, 255, 0.65); border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.6); transform: translate(-50%, -50%); transition: transform 0.04s linear; }
 
-    /* === 矩形動作按鍵區 === */
+    /* === 動作區 (等大矩形) === */
     #action-zone {
         position: absolute; right: 40px; bottom: 40px;
-        width: 240px; height: 200px;
-        display: grid; gap: 8px; pointer-events: auto;
-        /* 預設等比例 */
-        grid-template-columns: 50% 50%; 
-        grid-template-rows: 50% 50%;
-        transition: grid-template-columns 0.15s ease, grid-template-rows 0.15s ease;
+        width: 200px; height: 200px; /* 尺寸完全對齊搖桿 */
+        background: rgba(0, 0, 0, 0.3);
+        border: 2px solid rgba(255, 255, 255, 0.4);
+        border-radius: 16px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.5);
     }
-
-    /* CSS 變形類別 */
-    #action-zone.layout-d { grid-template-columns: 65% 35%; } /* D收窄，左側加寬 */
-    #action-zone.layout-j { grid-template-rows: 35% 65%; }    /* J縮短，A伸長 */
-    #action-zone.layout-a { grid-template-rows: 65% 35%; }    /* A縮短，J伸長 */
-    #action-zone.layout-d.layout-j { grid-template-columns: 65% 35%; grid-template-rows: 35% 65%; }
-    #action-zone.layout-d.layout-a { grid-template-columns: 65% 35%; grid-template-rows: 65% 35%; }
 
     .act-btn {
-        border-radius: 12px; color: white;
-        font-size: 24px; font-weight: bold;
+        position: absolute;
         display: flex; justify-content: center; align-items: center;
-        border: 2px solid rgba(255,255,255,0.4);
-        transition: background 0.1s;
+        background: rgba(255, 255, 255, 0.15); /* 預設顏色等同搖桿組件 */
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 10px;
+        color: white; font-weight: bold; font-size: 22px;
+        /* 平滑變形動畫：0.15s */
+        transition: top 0.15s ease, left 0.15s ease, width 0.15s ease, height 0.15s ease, background 0.1s;
     }
-    
     .act-btn span { transition: opacity 0.1s ease; pointer-events: none; }
     .act-btn.active span { opacity: 0; }
 
-    /* 無毛玻璃的純色半透明 */
-    #btn-j { grid-column: 1; grid-row: 1; background: rgba(50, 150, 255, 0.4); }
-    #btn-a { grid-column: 1; grid-row: 2; background: rgba(255, 50, 50, 0.4); }
-    #btn-d { grid-column: 2; grid-row: 1 / span 2; background: rgba(50, 255, 50, 0.4); }
+    /* 各自獨立點亮色彩 */
+    #btn-j.active { background: rgba(50, 150, 255, 0.6); border-color: rgba(50, 150, 255, 0.9); }
+    #btn-a.active { background: rgba(255, 50, 50, 0.6); border-color: rgba(255, 50, 50, 0.9); }
+    #btn-d.active { background: rgba(50, 255, 50, 0.6); border-color: rgba(50, 255, 50, 0.9); }
 
-    /* 亮色反饋 */
-    #btn-j.active { background: rgba(50, 150, 255, 0.85); }
-    #btn-a.active { background: rgba(255, 50, 50, 0.85); }
-    #btn-d.active { background: rgba(50, 255, 50, 0.85); }
+    /* --- 佈局百分比配置 (預設狀態) --- */
+    #btn-j { top: 2%; left: 2%; width: 47%; height: 47%; }
+    #btn-a { top: 51%; left: 2%; width: 47%; height: 47%; }
+    #btn-d { top: 2%; left: 51%; width: 47%; height: 96%; }
+
+    /* --- D 被按：D 縮窄為 32%，左側擴展至 62% --- */
+    #action-zone.layout-d #btn-d { left: 66%; width: 32%; }
+    #action-zone.layout-d #btn-j, #action-zone.layout-d #btn-a { width: 62%; }
+
+    /* --- J 被按：J 高度縮短為 32%，A 拉長至 62% --- */
+    #action-zone.layout-j #btn-j { height: 32%; }
+    #action-zone.layout-j #btn-a { top: 36%; height: 62%; }
+
+    /* --- A 被按：A 高度縮短為 32%，J 拉長至 62% --- */
+    #action-zone.layout-a #btn-a { top: 66%; height: 32%; }
+    #action-zone.layout-a #btn-j { height: 62%; }
 
     /* === 面板綜合區 === */
-    .hidden-panel { display: none; position: absolute; top: 15px; left: 50%; transform: translateX(-50%); background: rgba(15, 15, 20, 0.95); padding: 15px; border-radius: 16px; border: 2px solid rgba(255, 255, 255, 0.2); box-shadow: 0 8px 32px rgba(0,0,0,0.8); pointer-events: auto; flex-direction: column; gap: 8px; z-index: 10000; width: 85%; max-width: 650px; opacity: 0; transition: opacity 0.3s ease; }
+    .hidden-panel { display: none; position: absolute; top: 15px; left: 50%; transform: translateX(-50%); background: rgba(15, 15, 20, 0.95); padding: 15px; border-radius: 16px; border: 2px solid rgba(255, 255, 255, 0.2); box-shadow: 0 8px 32px rgba(0,0,0,0.8); flex-direction: column; gap: 8px; z-index: 10000; width: 85%; max-width: 650px; opacity: 0; transition: opacity 0.3s ease; }
     .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
     .ctrl-btn { background: #444; color: white; border: none; border-radius: 8px; width: 32px; height: 32px; font-size: 20px; font-weight: bold; display: flex; justify-content: center; align-items: center; }
     .fkey-grid { display: grid; grid-template-columns: repeat(9, 1fr); gap: 6px; }
@@ -1220,8 +1230,8 @@ html, body {
         <div id="game-screen-overlay-wrapper">
             <div id="debug-text"></div>
         </div>
-<div id="mobile-ui" class="hidden-ui">
-    <!-- 綜合面板：雙指上滑呼出 -->
+<div id="mobile-ui">
+    <!-- 綜合面板：三連擊呼出 -->
     <div id="panel-unified" class="hidden-panel">
         <div class="panel-header">
             <span style="color:#aaa; font-size:14px; margin-left: 5px;">系統與輸入功能</span>
@@ -1230,6 +1240,7 @@ html, body {
                 <button class="ctrl-btn" style="background:#aa2222;" onclick="hidePanels()">✕</button>
             </div>
         </div>
+        
         <div class="fkey-grid">
             <button class="v-panel-key" data-var="Za">F1</button>
             <button class="v-panel-key" data-var="Pa">F2</button>
@@ -1241,6 +1252,7 @@ html, body {
             <button class="v-panel-key" data-var="$a">F8</button>
             <button class="v-panel-key" data-var="qa">F9</button>
         </div>
+
         <div id="kb-section" style="display: none; flex-direction: column; gap: 4px; margin-top: 10px; border-top: 1px solid #444; padding-top: 10px;">
             <div class="kb-row" id="kb-digits"></div>
             <div class="kb-row" id="kb-letters-1"></div>
@@ -1260,11 +1272,11 @@ html, body {
         </div>
     </div>
 
-    <!-- 矩形動態變形動作按鍵區 -->
+    <!-- 矩形動態動作按鍵區 -->
     <div id="action-zone">
         <div class="act-btn" id="btn-j"><span>跳 (J)</span></div>
-        <div class="act-btn" id="btn-d"><span>防 (D)</span></div>
         <div class="act-btn" id="btn-a"><span>攻 (A)</span></div>
+        <div class="act-btn" id="btn-d"><span>防 (D)</span></div>
     </div>
 </div>
         <script>
@@ -1289,44 +1301,49 @@ html, body {
     
     <script src="js/game.js"></script>
 <script>
-    // ================= UI 隱藏/顯示邏輯 =================
+    // ================= 0. 自動顯示 / 隱藏控制 =================
+    let isMobileUIVisible = false;
     const mobileUI = document.getElementById('mobile-ui');
-    
-    // 實體鍵盤敲擊時隱藏 UI
-    window.addEventListener('keydown', (e) => {
-        if (e.isTrusted) mobileUI.classList.remove('visible');
-    });
-    
-    // 觸控螢幕時顯示 UI
+
+    // 任何輕觸畫面喚醒 UI
     document.addEventListener('touchstart', (e) => {
-        if (e.isTrusted) mobileUI.classList.add('visible');
-    }, { passive: true });
+        if (!isMobileUIVisible) {
+            // 確認是手機/平板才喚醒
+            if (/Android|webOS|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                isMobileUIVisible = true;
+                mobileUI.classList.add('visible');
+            }
+        }
+    }, { passive: false });
+
+    // 實體鍵盤按下時自動隱藏
+    window.addEventListener('keydown', (e) => {
+        if (isMobileUIVisible) {
+            isMobileUIVisible = false;
+            mobileUI.classList.remove('visible');
+        }
+    });
 
     const triggerKey = (code, isDown) => {
         window.dispatchEvent(new KeyboardEvent(isDown ? 'keydown' : 'keyup', { code: code, key: code }));
     };
 
-    // ================= 1. 矩形動作區 (延遲恢復 & 絕對判定) =================
+    // ================= 1. 動態矩形動作區 (邏輯判定瞬間，動畫延遲 120ms) =================
     const actionZone = document.getElementById('action-zone');
+    const dpadCross = document.getElementById('dpad-cross');
     let actTouchMap = {};
     let turboTimers = {};
     
-    // 紀錄「目標佈局」狀態 (用來瞬間運算碰撞，無視動畫)
-    let layoutState = { d: false, j: false, a: false };
-    // 紀錄「釋放延遲」計時器
-    let layoutTimers = { d: null, j: null, a: null };
+    // 記錄當前哪些鍵被邏輯按下（負責 120ms 的延遲釋放與即時判定）
+    let activeLayout = { 'KeyD': false, 'KeyJ': false, 'KeyA': false };
+    let layoutTimers = { 'KeyD': null, 'KeyJ': null, 'KeyA': null };
 
-    const updateLayoutClasses = () => {
-        actionZone.classList.toggle('layout-d', layoutState.d);
-        actionZone.classList.toggle('layout-j', layoutState.j);
-        actionZone.classList.toggle('layout-a', layoutState.a);
-        
-        // 同步通知搖桿 (若D被按，搖桿十字鍵鎖定亮黃色)
-        const joyZone = document.getElementById('joystick-zone');
-        joyZone.classList.toggle('d-locked', layoutState.d);
-        
-        // 若搖桿被按住，立即重算軸向
-        if (joyTouchId !== null && lastJoyX !== null) updateJoystick(lastJoyX, lastJoyY);
+    // 根據 activeLayout 狀態切換 CSS class（觸發視覺動畫與十字鍵變化）
+    const updateVisuals = () => {
+        actionZone.classList.toggle('layout-d', activeLayout['KeyD']);
+        actionZone.classList.toggle('layout-j', activeLayout['KeyJ']);
+        actionZone.classList.toggle('layout-a', activeLayout['KeyA']);
+        dpadCross.classList.toggle('d-pressed', activeLayout['KeyD']); // 十字鍵變粗亮黃色
     };
 
     const pressActionKeys = (keys, isDown) => {
@@ -1336,11 +1353,13 @@ html, body {
             let btn = document.getElementById(`btn-${short}`);
             
             if (isDown) {
-                clearTimeout(layoutTimers[short]);
-                layoutState[short] = true;
-                updateLayoutClasses();
                 if (btn) btn.classList.add('active');
+                // 瞬間切換形狀狀態
+                activeLayout[code] = true;
+                clearTimeout(layoutTimers[code]);
+                updateVisuals();
                 
+                // 連發 Turbo
                 if (!turboTimers[code]) {
                     turboTimers[code] = {
                         timeout: setTimeout(() => {
@@ -1353,11 +1372,12 @@ html, body {
             } else {
                 if (btn) btn.classList.remove('active');
                 
-                // 150ms 延遲恢復形狀
-                layoutTimers[short] = setTimeout(() => {
-                    layoutState[short] = false;
-                    updateLayoutClasses();
-                }, 150);
+                // 延遲 120ms 才恢復判定形狀與視覺動畫
+                clearTimeout(layoutTimers[code]);
+                layoutTimers[code] = setTimeout(() => {
+                    activeLayout[code] = false;
+                    updateVisuals();
+                }, 120);
 
                 if (turboTimers[code]) {
                     clearTimeout(turboTimers[code].timeout); clearInterval(turboTimers[code].interval); delete turboTimers[code];
@@ -1366,48 +1386,48 @@ html, body {
         });
     };
 
-    // 數學級別的瞬間判定 (直接根據 layoutState，不跟隨動畫的半成品)
+    // 核心判定邏輯：依據 activeLayout "瞬間" 取得判定邊界 (無視過渡動畫)
     const getActionKeys = (x, y, isInitialTouch) => {
         const rect = actionZone.getBoundingClientRect();
-        const localX = x - rect.left;
-        const localY = y - rect.top;
-        
-        // 取得「最終形狀」的分割線
-        const divX = layoutState.d ? rect.width * 0.65 : rect.width * 0.5;
-        let divY = rect.height * 0.5;
-        if (layoutState.j) divY = rect.height * 0.35;
-        else if (layoutState.a) divY = rect.height * 0.65;
-        
+        // 將點擊座標轉為 0.0 ~ 1.0 的百分比
+        const lx = (x - rect.left) / rect.width;
+        const ly = (y - rect.top) / rect.height;
+
+        // 計算當前"最終態"的交界線 (D縮窄時交界線為 65%，J縮窄時水平交界為 35%)
+        let divX = activeLayout['KeyD'] ? 0.65 : 0.50;
+        let divY = 0.50;
+        if (activeLayout['KeyJ'] && !activeLayout['KeyA']) divY = 0.35;
+        if (activeLayout['KeyA'] && !activeLayout['KeyJ']) divY = 0.65;
+
+        // 【邊界縫隙同按判定】(15% 寬高容錯)
         if (isInitialTouch) {
-            // 圓心點: D+J+A
-            if (Math.hypot(localX - divX, localY - divY) < 30) return ['KeyD', 'KeyJ', 'KeyA'];
-            
-            // 邊界同按判定
-            if (Math.abs(localX - divX) < 25) {
-                if (localY < divY) return ['KeyD', 'KeyJ'];
-                else return ['KeyD', 'KeyA'];
-            }
+            const margin = 0.15;
+            const nearX = Math.abs(lx - divX) < margin;
+            const nearY = Math.abs(ly - divY) < margin;
+
+            if (nearX && nearY) return ['KeyD', 'KeyJ', 'KeyA']; // 十字交界：三鍵同按
+            if (nearX) return ['KeyD', ly < divY ? 'KeyJ' : 'KeyA']; // 垂直交界
+            if (nearY && lx < divX) return ['KeyJ', 'KeyA']; // J/A 水平交界
         }
-        
-        // 常規判定
-        if (localX > divX) return ['KeyD'];
-        if (localY < divY) return ['KeyJ'];
+
+        // 常規區塊判定
+        if (lx > divX) return ['KeyD'];
+        if (ly < divY) return ['KeyJ'];
         return ['KeyA'];
     };
 
     const handleActionTouch = (e) => {
         e.preventDefault();
         let newTouchMap = { ...actTouchMap };
-        
+        const rect = actionZone.getBoundingClientRect();
+
         for (let i = 0; i < e.changedTouches.length; i++) {
             let touch = e.changedTouches[i];
+            const lx = (touch.clientX - rect.left) / rect.width;
+            const ly = (touch.clientY - rect.top) / rect.height;
             
-            // 由於採用數學計算，無須檢查 elementFromPoint
-            let rect = actionZone.getBoundingClientRect();
-            // 放寬一點外部邊界，避免滑太快斷掉
-            if (e.type === 'touchend' || e.type === 'touchcancel' || 
-                touch.clientX < rect.left - 20 || touch.clientX > rect.right + 20 || 
-                touch.clientY < rect.top - 20 || touch.clientY > rect.bottom + 20) {
+            // 只要滑出外框就視為放開
+            if (e.type === 'touchend' || e.type === 'touchcancel' || lx < 0 || lx > 1 || ly < 0 || ly > 1) {
                 delete newTouchMap[touch.identifier];
             } else {
                 newTouchMap[touch.identifier] = getActionKeys(touch.clientX, touch.clientY, e.type === 'touchstart');
@@ -1432,16 +1452,14 @@ html, body {
     actionZone.addEventListener('touchcancel', handleActionTouch, { passive: false });
 
 
-    // ================= 2. 搖桿 (防禦鎖定單軸與禁止連點) =================
+    // ================= 2. 十字單軸搖桿 =================
     const joyBase = document.getElementById('joystick-base');
     const joyStick = document.getElementById('joystick-stick');
     const joyZone = document.getElementById('joystick-zone');
     let joyTouchId = null, currentJoyKeys = [], hasDashed = false;
-    let lastJoyX = null, lastJoyY = null;
-    const maxJoyRadius = 100, dashRadius = 80;
+    const maxJoyRadius = 100, dashRadius = 80, axisLockMargin = 25;
 
     const updateJoystick = (x, y) => {
-        lastJoyX = x; lastJoyY = y; // 記憶座標，供D鍵按下時重算
         const rect = joyBase.getBoundingClientRect();
         const dx = x - (rect.left + maxJoyRadius), dy = y - (rect.top + maxJoyRadius);
         const distance = Math.hypot(dx, dy);
@@ -1452,48 +1470,33 @@ html, body {
         if (distance < 20) {
             currentJoyKeys.forEach(k => triggerKey(k, false)); currentJoyKeys = []; hasDashed = false; return;
         }
-        
         let newKeys = [];
-        // 如果 D 鍵被按下，強制鎖死成 4 軸 (容錯 ±45 度) 並禁止雙擊連點
-        if (layoutState.d) {
-            if (angle > -45 && angle <= 45) newKeys.push('ArrowRight');
-            else if (angle > 45 && angle <= 135) newKeys.push('ArrowDown');
-            else if (angle < -45 && angle >= -135) newKeys.push('ArrowUp');
-            else newKeys.push('ArrowLeft');
-            hasDashed = false; // 強制阻斷衝刺
-        } else {
-            // 正常角度判定 (25度容錯)
-            if (angle > -25 && angle < 25) newKeys.push('ArrowRight');
-            else if (angle > 155 || angle < -155) newKeys.push('ArrowLeft');
-            else if (angle > 65 && angle < 115) newKeys.push('ArrowDown');
-            else if (angle > -115 && angle < -65) newKeys.push('ArrowUp');
-            else {
-                if (Math.abs(angle) < 90) newKeys.push('ArrowRight'); else newKeys.push('ArrowLeft');
-                if (angle > 0) newKeys.push('ArrowDown'); else newKeys.push('ArrowUp');
-            }
-
-            // 衝刺判定 (僅在 D 沒按下的狀態)
-            if (distance > dashRadius && !hasDashed && newKeys.length === 1 && (newKeys[0] === 'ArrowRight' || newKeys[0] === 'ArrowLeft')) {
-                hasDashed = true; triggerKey(newKeys[0], false); setTimeout(() => triggerKey(newKeys[0], true), 40);
-            } else if (distance < dashRadius * 0.7) { 
-                hasDashed = false; 
-            }
+        if (angle > -axisLockMargin && angle < axisLockMargin) newKeys.push('ArrowRight');
+        else if (angle > 180 - axisLockMargin || angle < -180 + axisLockMargin) newKeys.push('ArrowLeft');
+        else if (angle > 90 - axisLockMargin && angle < 90 + axisLockMargin) newKeys.push('ArrowDown');
+        else if (angle > -90 - axisLockMargin && angle < -90 + axisLockMargin) newKeys.push('ArrowUp');
+        else {
+            if (Math.abs(angle) < 90) newKeys.push('ArrowRight'); else newKeys.push('ArrowLeft');
+            if (angle > 0) newKeys.push('ArrowDown'); else newKeys.push('ArrowUp');
         }
 
-        let added = newKeys.filter(k => !currentJoyKeys.includes(k)); 
-        let removed = currentJoyKeys.filter(k => !newKeys.includes(k));
+        if (distance > dashRadius && !hasDashed && newKeys.length === 1 && (newKeys[0] === 'ArrowRight' || newKeys[0] === 'ArrowLeft')) {
+            hasDashed = true; triggerKey(newKeys[0], false); setTimeout(() => triggerKey(newKeys[0], true), 40);
+        } else if (distance < dashRadius * 0.7) { hasDashed = false; }
+
+        let added = newKeys.filter(k => !currentJoyKeys.includes(k)); let removed = currentJoyKeys.filter(k => !newKeys.includes(k));
         removed.forEach(k => triggerKey(k, false)); added.forEach(k => triggerKey(k, true));
         currentJoyKeys = newKeys;
     };
 
     joyZone.addEventListener('touchstart', (e) => { e.preventDefault(); if (joyTouchId === null) { joyTouchId = e.changedTouches[0].identifier; updateJoystick(e.changedTouches[0].clientX, e.changedTouches[0].clientY); } }, { passive: false });
     joyZone.addEventListener('touchmove', (e) => { e.preventDefault(); for (let i = 0; i < e.changedTouches.length; i++) if (e.changedTouches[i].identifier === joyTouchId) updateJoystick(e.changedTouches[i].clientX, e.changedTouches[i].clientY); }, { passive: false });
-    const endJoystick = (e) => { for (let i = 0; i < e.changedTouches.length; i++) if (e.changedTouches[i].identifier === joyTouchId) { joyTouchId = null; lastJoyX = null; lastJoyY = null; joyStick.style.transform = `translate(-50%, -50%)`; currentJoyKeys.forEach(k => triggerKey(k, false)); currentJoyKeys = []; hasDashed = false; } };
+    const endJoystick = (e) => { for (let i = 0; i < e.changedTouches.length; i++) if (e.changedTouches[i].identifier === joyTouchId) { joyTouchId = null; joyStick.style.transform = `translate(-50%, -50%)`; currentJoyKeys.forEach(k => triggerKey(k, false)); currentJoyKeys = []; hasDashed = false; } };
     joyZone.addEventListener('touchend', endJoystick); joyZone.addEventListener('touchcancel', endJoystick);
 
 
-    // ================= 3. 雙指上滑面板 (3秒閒置淡出) =================
-    let twoFingerStartY = null;
+    // ================= 3. 三連擊綜合面板 (3秒閒置淡出) =================
+    let tapTimes = [];
     let panelIdleTimer = null;
     const panelUI = document.getElementById('panel-unified');
 
@@ -1501,6 +1504,7 @@ html, body {
         panelUI.style.display = 'flex';
         panelUI.offsetHeight; 
         panelUI.style.opacity = '1';
+        
         kbExpanded = false;
         document.getElementById('kb-section').style.display = 'none';
         document.getElementById('btn-expand').innerText = '+';
@@ -1516,19 +1520,18 @@ html, body {
         clearTimeout(panelIdleTimer);
         panelIdleTimer = setTimeout(() => { hidePanels(); }, 3000);
     };
+
     panelUI.addEventListener('touchstart', resetPanelTimer, { passive: true });
 
     document.addEventListener('touchstart', (e) => {
-        if (e.touches.length === 2 && !e.target.closest('#action-zone') && !e.target.closest('#joystick-zone')) {
-            twoFingerStartY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+        if (e.target.closest('#action-zone') || e.target.closest('#joystick-zone') || e.target.closest('.hidden-panel')) return;
+        let now = Date.now();
+        tapTimes.push(now);
+        if (tapTimes.length > 3) tapTimes.shift();
+        if (tapTimes.length === 3 && (now - tapTimes[0] < 800)) {
+            showPanel(); tapTimes = [];
         }
     }, { passive: false });
-    document.addEventListener('touchmove', (e) => {
-        if (e.touches.length === 2 && twoFingerStartY !== null) {
-            let currentY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
-            if (currentY - twoFingerStartY < -60) { showPanel(); twoFingerStartY = null; }
-        }
-    });
 
     let kbExpanded = false;
     const toggleKeyboard = () => {
